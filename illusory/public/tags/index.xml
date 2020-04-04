@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on 幻境云图</title>
+    <link>https://www.lixueduan.com/tags/</link>
+    <description>Recent content in Tags on 幻境云图</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 21 Dec 2019 21:58:08 +0800</lastBuildDate>
+    
+	<atom:link href="https://www.lixueduan.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>标签</title>
+      <link>https://www.lixueduan.com/tags/%E6%A0%87%E7%AD%BE/</link>
+      <pubDate>Sat, 21 Dec 2019 21:58:08 +0800</pubDate>
+      
+      <guid>https://www.lixueduan.com/tags/%E6%A0%87%E7%AD%BE/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Android</title>
+      <link>https://www.lixueduan.com/tags/Android/</link>
+      <pubDate>Sat, 21 Dec 2019 12:49:47 +0800</pubDate>
+      
+      <guid>https://www.lixueduan.com/tags/Android/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Test</title>
+      <link>https://www.lixueduan.com/tags/Test/</link>
+      <pubDate>Sat, 21 Dec 2019 12:49:47 +0800</pubDate>
+      
+      <guid>https://www.lixueduan.com/tags/Test/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

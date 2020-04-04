@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Android view | 幻境云图</title>
+    <meta property="og:title" content="Android view - 幻境云图">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2019-12-21T12:49:47&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2019-12-21T12:49:47&#43;08:00'>
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,幻境云图,java,博客">
+    <meta name="description" content="Android view click even dispatch">
+        
+    <meta name="author" content="意琦行">
+    <meta property="og:url" content="https://www.lixueduan.com/post/view-click-event/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-7693630257897132",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.lixueduan.com">
+                        幻境云图
+                    </a>
+                
+                <p class="description">勿在浮沙筑高台</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.lixueduan.com">首页</a>
+                    
+                    <a  href="https://www.lixueduan.com/categories/" title="分类">分类</a>
+                    
+                    <a  href="https://www.lixueduan.com/tags/" title="标签">标签</a>
+                    
+                    <a  href="https://www.lixueduan.com/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://www.lixueduan.com/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -220px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        margin: 0 10px;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-">1. 触发过程</a>
+      <ul>
+        <li><a href="#11-">1.1 点击控件</a></li>
+        <li><a href="#12-dispatchtoucheven">1.2 dispatchTouchEven</a></li>
+        <li><a href="#13-ontouchevent">1.3 onTouchEvent</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-viewgroup">2. ViewGroup</a></li>
+    <li><a href="#3-">3. 总结</a>
+      <ul>
+        <li><a href="#heading">传递顺序</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-1">参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Android view</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='https://www.lixueduan.com/categories/Android'>Android</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>本文主要记录了Android中的事件分发机制。通过对源码进行分析和实例测试，对Android事件分发机制有了更深的了解。主要为学习Android时的笔记。</p>
+<blockquote>
+<p>更多文章欢迎访问我的个人博客&ndash;&gt;<a href="https://www.lixueduan.com/">幻境云图</a></p>
+</blockquote>
+<h2 id="1-">1. 触发过程</h2>
+<h3 id="11-">1.1 点击控件</h3>
+<h3 id="12-dispatchtoucheven">1.2 dispatchTouchEven</h3>
+<p>一定会执行<code>dispatchTouchEvent</code>方法，若当前类没有该方法，则向上往父类查找。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">boolean</span> <span style="color:#900;font-weight:bold">dispatchTouchEvent</span><span style="color:#000;font-weight:bold">(</span>MotionEvent event<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>mOnTouchListener <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span> <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">&amp;</span> <span style="color:#000;font-weight:bold">(</span>mViewFlags <span style="color:#000;font-weight:bold">&amp;</span> ENABLED_MASK<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> ENABLED <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">&amp;</span>
+            mOnTouchListener<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">onTouch</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">,</span> event<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">return</span> onTouchEvent<span style="color:#000;font-weight:bold">(</span>event<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>条件1 mOnTouchListener != null</li>
+</ul>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">setOnTouchListener</span><span style="color:#000;font-weight:bold">(</span>OnTouchListener l<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+    mOnTouchListener <span style="color:#000;font-weight:bold">=</span> l<span style="color:#000;font-weight:bold">;</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>给控件设置监听就会给mOnTouchListener赋值，则条件1成立。</p>
+<ul>
+<li>
+<p>条件2 (mViewFlags &amp; ENABLED_MASK) == ENABLED 控件是否是可点击的</p>
+</li>
+<li>
+<p>条件3 mOnTouchListener.onTouch(this, event) 回调onTouch方法，返回true 则成立</p>
+</li>
+</ul>
+<p>**小结：**dispatchTouchEvent 方法中一定会执行onTouch方法，如果onTouch方法返回true 则dispatchTouchEvent方法直接返回true 不会执行if外的 return onTouchEvent(event)。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">       title_bar<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setOnTouchListener</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">new</span> View<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">OnTouchListener</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#3c5d5d;font-weight:bold">@Override</span>
+            <span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">boolean</span> <span style="color:#900;font-weight:bold">onTouch</span><span style="color:#000;font-weight:bold">(</span>View v<span style="color:#000;font-weight:bold">,</span> MotionEvent event<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+			Log<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">v</span><span style="color:#000;font-weight:bold">(</span><span style="color:#d14">&#34;Az&#34;</span><span style="color:#000;font-weight:bold">,</span><span style="color:#d14">&#34;onTouch&#34;</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">false</span><span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">}</span>
+        <span style="color:#000;font-weight:bold">}</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在setOnTouchListener时，onTouch方法默认返回false,所以才会执行后面的onTouchEvent方法；</p>
+<h3 id="13-ontouchevent">1.3 onTouchEvent</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">78
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">79
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">80
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">81
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">82
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">83
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">84
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">85
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">86
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">87
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">88
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">89
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">90
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">91
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">92
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">93
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">boolean</span> <span style="color:#900;font-weight:bold">onTouchEvent</span><span style="color:#000;font-weight:bold">(</span>MotionEvent event<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">int</span> viewFlags <span style="color:#000;font-weight:bold">=</span> mViewFlags<span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>viewFlags <span style="color:#000;font-weight:bold">&amp;</span> ENABLED_MASK<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> DISABLED<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#998;font-style:italic">// A disabled view that is clickable still consumes the touch
+</span><span style="color:#998;font-style:italic"></span>        <span style="color:#998;font-style:italic">// events, it just doesn&#39;t respond to them.
+</span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>viewFlags <span style="color:#000;font-weight:bold">&amp;</span> CLICKABLE<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> CLICKABLE <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span>
+                <span style="color:#000;font-weight:bold">(</span>viewFlags <span style="color:#000;font-weight:bold">&amp;</span> LONG_CLICKABLE<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> LONG_CLICKABLE<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>mTouchDelegate <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>mTouchDelegate<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">onTouchEvent</span><span style="color:#000;font-weight:bold">(</span>event<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>viewFlags <span style="color:#000;font-weight:bold">&amp;</span> CLICKABLE<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> CLICKABLE <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span>
+            <span style="color:#000;font-weight:bold">(</span>viewFlags <span style="color:#000;font-weight:bold">&amp;</span> LONG_CLICKABLE<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> LONG_CLICKABLE<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#000;font-weight:bold">switch</span> <span style="color:#000;font-weight:bold">(</span>event<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getAction</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#000;font-weight:bold">case</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_UP</span><span style="color:#000;font-weight:bold">:</span>
+                <span style="color:#458;font-weight:bold">boolean</span> prepressed <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">(</span>mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span> PREPRESSED<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span> PRESSED<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> 0 <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span> prepressed<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                    <span style="color:#998;font-style:italic">// take focus if we don&#39;t have it already and we should in
+</span><span style="color:#998;font-style:italic"></span>                    <span style="color:#998;font-style:italic">// touch mode.
+</span><span style="color:#998;font-style:italic"></span>                    <span style="color:#458;font-weight:bold">boolean</span> focusTaken <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">false</span><span style="color:#000;font-weight:bold">;</span>
+                    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>isFocusable<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">&amp;</span> isFocusableInTouchMode<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">&amp;</span> <span style="color:#000;font-weight:bold">!</span>isFocused<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                        focusTaken <span style="color:#000;font-weight:bold">=</span> requestFocus<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                    <span style="color:#000;font-weight:bold">}</span>
+                    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">!</span>mHasPerformedLongPress<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                        <span style="color:#998;font-style:italic">// This is a tap, so remove the longpress check
+</span><span style="color:#998;font-style:italic"></span>                        removeLongPressCallback<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                        <span style="color:#998;font-style:italic">// Only perform take click actions if we were in the pressed state
+</span><span style="color:#998;font-style:italic"></span>                        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">!</span>focusTaken<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                            <span style="color:#998;font-style:italic">// Use a Runnable and post this rather than calling
+</span><span style="color:#998;font-style:italic"></span>                            <span style="color:#998;font-style:italic">// performClick directly. This lets other visual state
+</span><span style="color:#998;font-style:italic"></span>                            <span style="color:#998;font-style:italic">// of the view update before click actions start.
+</span><span style="color:#998;font-style:italic"></span>                            <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>mPerformClick <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                                mPerformClick <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> PerformClick<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                            <span style="color:#000;font-weight:bold">}</span>
+                            <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">!</span>post<span style="color:#000;font-weight:bold">(</span>mPerformClick<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                                performClick<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                            <span style="color:#000;font-weight:bold">}</span>
+                        <span style="color:#000;font-weight:bold">}</span>
+                    <span style="color:#000;font-weight:bold">}</span>
+                    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>mUnsetPressedState <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                        mUnsetPressedState <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> UnsetPressedState<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                    <span style="color:#000;font-weight:bold">}</span>
+                    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>prepressed<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                        mPrivateFlags <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">=</span> PRESSED<span style="color:#000;font-weight:bold">;</span>
+                        refreshDrawableState<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                        postDelayed<span style="color:#000;font-weight:bold">(</span>mUnsetPressedState<span style="color:#000;font-weight:bold">,</span>
+                                ViewConfiguration<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getPressedStateDuration</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                    <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">!</span>post<span style="color:#000;font-weight:bold">(</span>mUnsetPressedState<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                        <span style="color:#998;font-style:italic">// If the post failed, unpress right now
+</span><span style="color:#998;font-style:italic"></span>                        mUnsetPressedState<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">run</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                    <span style="color:#000;font-weight:bold">}</span>
+                    removeTapCallback<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">}</span>
+                <span style="color:#000;font-weight:bold">break</span><span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">case</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_DOWN</span><span style="color:#000;font-weight:bold">:</span>
+                <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>mPendingCheckForTap <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                    mPendingCheckForTap <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> CheckForTap<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">}</span>
+                mPrivateFlags <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">=</span> PREPRESSED<span style="color:#000;font-weight:bold">;</span>
+                mHasPerformedLongPress <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">false</span><span style="color:#000;font-weight:bold">;</span>
+                postDelayed<span style="color:#000;font-weight:bold">(</span>mPendingCheckForTap<span style="color:#000;font-weight:bold">,</span> ViewConfiguration<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getTapTimeout</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">break</span><span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">case</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_CANCEL</span><span style="color:#000;font-weight:bold">:</span>
+                mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">~</span>PRESSED<span style="color:#000;font-weight:bold">;</span>
+                refreshDrawableState<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                removeTapCallback<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">break</span><span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">case</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_MOVE</span><span style="color:#000;font-weight:bold">:</span>
+                <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">int</span> x <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">)</span> event<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getX</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">int</span> y <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">)</span> event<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getY</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#998;font-style:italic">// Be lenient about moving outside of buttons
+</span><span style="color:#998;font-style:italic"></span>                <span style="color:#458;font-weight:bold">int</span> slop <span style="color:#000;font-weight:bold">=</span> mTouchSlop<span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>x <span style="color:#000;font-weight:bold">&lt;</span> 0 <span style="color:#000;font-weight:bold">-</span> slop<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span> <span style="color:#000;font-weight:bold">(</span>x <span style="color:#000;font-weight:bold">&gt;</span><span style="color:#000;font-weight:bold">=</span> getWidth<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">+</span> slop<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span>
+                        <span style="color:#000;font-weight:bold">(</span>y <span style="color:#000;font-weight:bold">&lt;</span> 0 <span style="color:#000;font-weight:bold">-</span> slop<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span> <span style="color:#000;font-weight:bold">(</span>y <span style="color:#000;font-weight:bold">&gt;</span><span style="color:#000;font-weight:bold">=</span> getHeight<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">+</span> slop<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                    <span style="color:#998;font-style:italic">// Outside button
+</span><span style="color:#998;font-style:italic"></span>                    removeTapCallback<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span> PRESSED<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                        <span style="color:#998;font-style:italic">// Remove any future long press/tap checks
+</span><span style="color:#998;font-style:italic"></span>                        removeLongPressCallback<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                        <span style="color:#998;font-style:italic">// Need to switch from pressed to not pressed
+</span><span style="color:#998;font-style:italic"></span>                        mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">~</span>PRESSED<span style="color:#000;font-weight:bold">;</span>
+                        refreshDrawableState<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                    <span style="color:#000;font-weight:bold">}</span>
+                <span style="color:#000;font-weight:bold">}</span>
+                <span style="color:#000;font-weight:bold">break</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">}</span>
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">false</span><span style="color:#000;font-weight:bold">;</span>
+<span style="color:#000;font-weight:bold">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p><code>首先在第14行我们可以看出，如果该控件是可以点击的就会进入到第16行的switch判断中去，而如果当前的事件是抬起手指，则会进入到MotionEvent.ACTION_UP这个case当中。在经过种种判断之后，会执行到第38行的performClick()方法，那我们进入到这个方法里瞧一瞧：</code></p>
+<p>若当前事件为抬手，则进入performClick方法</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">boolean</span> <span style="color:#900;font-weight:bold">performClick</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+    sendAccessibilityEvent<span style="color:#000;font-weight:bold">(</span>AccessibilityEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">TYPE_VIEW_CLICKED</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>mOnClickListener <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        playSoundEffect<span style="color:#000;font-weight:bold">(</span>SoundEffectConstants<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">CLICK</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+        mOnClickListener<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">onClick</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">false</span><span style="color:#000;font-weight:bold">;</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果 mOnClickListener != null 则会执行onClick方法，</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">setOnClickListener</span><span style="color:#000;font-weight:bold">(</span>OnClickListener l<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">!</span>isClickable<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        setClickable<span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    mOnClickListener <span style="color:#000;font-weight:bold">=</span> l<span style="color:#000;font-weight:bold">;</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>所以只要给控件设置了点击监听，setOnClickListener就会给mOnClickListener赋值，上面条件就成立，然后回调onClick方法。</p>
+<p>到这儿差不多就清楚了分发流程。</p>
+<p><code>这样View的整个事件分发的流程就让我们搞清楚了！不过别高兴的太早，现在还没结束，还有一个很重要的知识点需要说明，就是touch事件的层级传递。我们都知道如果给一个控件注册了touch事件，每次点击它的时候都会触发一系列的ACTION_DOWN，ACTION_MOVE，ACTION_UP等事件。这里需要注意，如果你在执行ACTION_DOWN的时候返回了false，后面一系列其它的action就不会再得到执行了。简单的说，就是当dispatchTouchEvent在进行事件分发的时候，只有前一个action返回true，才会触发后一个action。</code></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">boolean</span> <span style="color:#900;font-weight:bold">onTouchEvent</span><span style="color:#000;font-weight:bold">(</span>MotionEvent event<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span> 
+    <span style="color:#998;font-style:italic">//省略...
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>viewFlags <span style="color:#000;font-weight:bold">&amp;</span> CLICKABLE<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> CLICKABLE <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span>
+                <span style="color:#000;font-weight:bold">(</span>viewFlags <span style="color:#000;font-weight:bold">&amp;</span> LONG_CLICKABLE<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> LONG_CLICKABLE<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#000;font-weight:bold">switch</span> <span style="color:#000;font-weight:bold">(</span>event<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getAction</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                <span style="color:#000;font-weight:bold">case</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_UP</span><span style="color:#000;font-weight:bold">:</span>
+                    <span style="color:#000;font-weight:bold">break</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">case</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_DOWN</span><span style="color:#000;font-weight:bold">:</span>      
+                    <span style="color:#000;font-weight:bold">break</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">case</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_CANCEL</span><span style="color:#000;font-weight:bold">:</span>             
+                    <span style="color:#000;font-weight:bold">break</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">case</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_MOVE</span><span style="color:#000;font-weight:bold">:</span>
+                    <span style="color:#000;font-weight:bold">break</span><span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">}</span>
+            <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看出在dispatchTouchEvent方法中，onTouch方法返回false,然后执行onTouchEvent方法，在进入if判断后，不管进入那个case,最后都会return true,所以才会执行后续的action.</p>
+<p><code>**1. onTouch和onTouchEvent有什么区别，又该如何使用？**</code></p>
+<p>都是dispatchTouchEvent中的方法，onTouch优先级高，若onTouch返回true，就会消费掉当前事件，onTouchEvent就不会执行。</p>
+<p>要执行onTouch也需要两个条件，1 给控件设置了触摸监听OnTouchListener ，2该控件是可以点击的。</p>
+<p>若控件是非enable的，则不会执行onTouch方法，会执行onTouchEvent，所以想要监听ouTouch事件只能重写onTouchEvent方法来实现。</p>
+<p><strong>小结：</strong></p>
+<p><strong>控件被点击或触摸后一定会执行dispatchTouchEvent方法（当前类没有则去父类找），如果设置了触摸监听且控件是enable的，就执行onTouch方法 。OnTouch方法返回true则消耗掉本次事件，不执行后面的方法，返回false则执行onTouchEvent方法，如果设置了点击监听且控件是enable的，就在抬手的时候执行onClick方法。</strong></p>
+<p><strong>给一个控件注册了touch事件，每次点击它的时候都会触发一系列的ACTION_DOWN，ACTION_MOVE，ACTION_UP等事件。当dispatchTouchEvent在进行事件分发的时候，只有前一个action返回true，才会触发后一个action。</strong></p>
+<h2 id="2-viewgroup">2. ViewGroup</h2>
+<p><code>Android中touch事件的传递，绝对是先传递到ViewGroup，再传递到View的</code></p>
+<p><code>上边说只要你触摸了任何控件，就一定会调用该控件的dispatchTouchEvent方法。这个说法没错，只不过还不完整而已。实际情况是，当你点击了某个控件，首先会去调用该控件所在布局的dispatchTouchEvent方法，然后在布局的dispatchTouchEvent方法中找到被点击的相应控件，再去调用该控件的dispatchTouchEvent方法。</code></p>
+<p>ViewGroup的dispatchTouchEvent方法</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">76
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">boolean</span> <span style="color:#900;font-weight:bold">dispatchTouchEvent</span><span style="color:#000;font-weight:bold">(</span>MotionEvent ev<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">int</span> action <span style="color:#000;font-weight:bold">=</span> ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getAction</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> xf <span style="color:#000;font-weight:bold">=</span> ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getX</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> yf <span style="color:#000;font-weight:bold">=</span> ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getY</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> scrolledXFloat <span style="color:#000;font-weight:bold">=</span> xf <span style="color:#000;font-weight:bold">+</span> mScrollX<span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> scrolledYFloat <span style="color:#000;font-weight:bold">=</span> yf <span style="color:#000;font-weight:bold">+</span> mScrollY<span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">final</span> Rect frame <span style="color:#000;font-weight:bold">=</span> mTempRect<span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#458;font-weight:bold">boolean</span> disallowIntercept <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">(</span>mGroupFlags <span style="color:#000;font-weight:bold">&amp;</span> FLAG_DISALLOW_INTERCEPT<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>action <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_DOWN</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>mMotionTarget <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+            mMotionTarget <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">}</span>
+        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>disallowIntercept <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span> <span style="color:#000;font-weight:bold">!</span>onInterceptTouchEvent<span style="color:#000;font-weight:bold">(</span>ev<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+            ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setAction</span><span style="color:#000;font-weight:bold">(</span>MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_DOWN</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">int</span> scrolledXInt <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">)</span> scrolledXFloat<span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">int</span> scrolledYInt <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">)</span> scrolledYFloat<span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">final</span> View<span style="color:#000;font-weight:bold">[</span><span style="color:#000;font-weight:bold">]</span> children <span style="color:#000;font-weight:bold">=</span> mChildren<span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">int</span> count <span style="color:#000;font-weight:bold">=</span> mChildrenCount<span style="color:#000;font-weight:bold">;</span>
+            <span style="color:#000;font-weight:bold">for</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span> i <span style="color:#000;font-weight:bold">=</span> count <span style="color:#000;font-weight:bold">-</span> 1<span style="color:#000;font-weight:bold">;</span> i <span style="color:#000;font-weight:bold">&gt;</span><span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">;</span> i<span style="color:#000;font-weight:bold">-</span><span style="color:#000;font-weight:bold">-</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                <span style="color:#000;font-weight:bold">final</span> View child <span style="color:#000;font-weight:bold">=</span> children<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]</span><span style="color:#000;font-weight:bold">;</span>
+                <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mViewFlags</span> <span style="color:#000;font-weight:bold">&amp;</span> VISIBILITY_MASK<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> VISIBLE
+                        <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span> child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getAnimation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                    child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getHitRect</span><span style="color:#000;font-weight:bold">(</span>frame<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>frame<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">contains</span><span style="color:#000;font-weight:bold">(</span>scrolledXInt<span style="color:#000;font-weight:bold">,</span> scrolledYInt<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                        <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> xc <span style="color:#000;font-weight:bold">=</span> scrolledXFloat <span style="color:#000;font-weight:bold">-</span> child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mLeft</span><span style="color:#000;font-weight:bold">;</span>
+                        <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> yc <span style="color:#000;font-weight:bold">=</span> scrolledYFloat <span style="color:#000;font-weight:bold">-</span> child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mTop</span><span style="color:#000;font-weight:bold">;</span>
+                        ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setLocation</span><span style="color:#000;font-weight:bold">(</span>xc<span style="color:#000;font-weight:bold">,</span> yc<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+                        child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mPrivateFlags</span> <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">~</span>CANCEL_NEXT_UP_EVENT<span style="color:#000;font-weight:bold">;</span>
+                        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">dispatchTouchEvent</span><span style="color:#000;font-weight:bold">(</span>ev<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span>  <span style="color:#000;font-weight:bold">{</span>
+                            mMotionTarget <span style="color:#000;font-weight:bold">=</span> child<span style="color:#000;font-weight:bold">;</span>
+                            <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">;</span>
+                        <span style="color:#000;font-weight:bold">}</span>
+                    <span style="color:#000;font-weight:bold">}</span>
+                <span style="color:#000;font-weight:bold">}</span>
+            <span style="color:#000;font-weight:bold">}</span>
+        <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#458;font-weight:bold">boolean</span> isUpOrCancel <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">(</span>action <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_UP</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span>
+            <span style="color:#000;font-weight:bold">(</span>action <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_CANCEL</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>isUpOrCancel<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        mGroupFlags <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">~</span>FLAG_DISALLOW_INTERCEPT<span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">final</span> View target <span style="color:#000;font-weight:bold">=</span> mMotionTarget<span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>target <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setLocation</span><span style="color:#000;font-weight:bold">(</span>xf<span style="color:#000;font-weight:bold">,</span> yf<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span> CANCEL_NEXT_UP_EVENT<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+            ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setAction</span><span style="color:#000;font-weight:bold">(</span>MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_CANCEL</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+            mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">~</span>CANCEL_NEXT_UP_EVENT<span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">}</span>
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">super</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">dispatchTouchEvent</span><span style="color:#000;font-weight:bold">(</span>ev<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">!</span>disallowIntercept <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">&amp;</span> onInterceptTouchEvent<span style="color:#000;font-weight:bold">(</span>ev<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> xc <span style="color:#000;font-weight:bold">=</span> scrolledXFloat <span style="color:#000;font-weight:bold">-</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">float</span><span style="color:#000;font-weight:bold">)</span> target<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mLeft</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> yc <span style="color:#000;font-weight:bold">=</span> scrolledYFloat <span style="color:#000;font-weight:bold">-</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">float</span><span style="color:#000;font-weight:bold">)</span> target<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mTop</span><span style="color:#000;font-weight:bold">;</span>
+        mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">~</span>CANCEL_NEXT_UP_EVENT<span style="color:#000;font-weight:bold">;</span>
+        ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setAction</span><span style="color:#000;font-weight:bold">(</span>MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_CANCEL</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+        ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setLocation</span><span style="color:#000;font-weight:bold">(</span>xc<span style="color:#000;font-weight:bold">,</span> yc<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">!</span>target<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">dispatchTouchEvent</span><span style="color:#000;font-weight:bold">(</span>ev<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#000;font-weight:bold">}</span>
+        mMotionTarget <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>isUpOrCancel<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        mMotionTarget <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> xc <span style="color:#000;font-weight:bold">=</span> scrolledXFloat <span style="color:#000;font-weight:bold">-</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">float</span><span style="color:#000;font-weight:bold">)</span> target<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mLeft</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">final</span> <span style="color:#458;font-weight:bold">float</span> yc <span style="color:#000;font-weight:bold">=</span> scrolledYFloat <span style="color:#000;font-weight:bold">-</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">float</span><span style="color:#000;font-weight:bold">)</span> target<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mTop</span><span style="color:#000;font-weight:bold">;</span>
+    ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setLocation</span><span style="color:#000;font-weight:bold">(</span>xc<span style="color:#000;font-weight:bold">,</span> yc<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>target<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mPrivateFlags</span> <span style="color:#000;font-weight:bold">&amp;</span> CANCEL_NEXT_UP_EVENT<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setAction</span><span style="color:#000;font-weight:bold">(</span>MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_CANCEL</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+        target<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mPrivateFlags</span> <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">~</span>CANCEL_NEXT_UP_EVENT<span style="color:#000;font-weight:bold">;</span>
+        mMotionTarget <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">return</span> target<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">dispatchTouchEvent</span><span style="color:#000;font-weight:bold">(</span>ev<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+<span style="color:#000;font-weight:bold">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>第二个if语句  if (disallowIntercept || !onInterceptTouchEvent(ev)</p>
+<p>第一个条件disallowIntercept 是否禁用掉事件拦截的功能，默认是false 所以是否进入if内部就由第二个条件决定了。</p>
+<p>ViewGroup中有一个onInterceptTouchEvent方法  是否拦截触摸事件 默认返回false 即不拦截</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">boolean</span> <span style="color:#900;font-weight:bold">onInterceptTouchEvent</span><span style="color:#000;font-weight:bold">(</span>MotionEvent ev<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">false</span><span style="color:#000;font-weight:bold">;</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>第二个条件  !onInterceptTouchEvent(ev) 对返回值取反 即返回false不拦截触摸事件时进入if内部，返回true拦截时不进入if内部</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#998;font-style:italic">//省略。。。
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>disallowIntercept <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span> <span style="color:#000;font-weight:bold">!</span>onInterceptTouchEvent<span style="color:#000;font-weight:bold">(</span>ev<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#000;font-weight:bold">for</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span> i <span style="color:#000;font-weight:bold">=</span> count <span style="color:#000;font-weight:bold">-</span> 1<span style="color:#000;font-weight:bold">;</span> i <span style="color:#000;font-weight:bold">&gt;</span><span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">;</span> i<span style="color:#000;font-weight:bold">-</span><span style="color:#000;font-weight:bold">-</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span><span style="color:#998;font-style:italic">//遍历当前ViewGroup下的所有子View
+</span><span style="color:#998;font-style:italic"></span>                <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">mViewFlags</span> <span style="color:#000;font-weight:bold">&amp;</span> VISIBILITY_MASK<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> VISIBLE
+                        <span style="color:#000;font-weight:bold">|</span><span style="color:#000;font-weight:bold">|</span> child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">getAnimation</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+                    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>frame<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">contains</span><span style="color:#000;font-weight:bold">(</span>scrolledXInt<span style="color:#000;font-weight:bold">,</span> scrolledYInt<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span><span style="color:#998;font-style:italic">//判断当前遍历的View是不是正在点击的View
+</span><span style="color:#998;font-style:italic"></span>                        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>child<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">dispatchTouchEvent</span><span style="color:#000;font-weight:bold">(</span>ev<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span>  <span style="color:#000;font-weight:bold">{</span><span style="color:#998;font-style:italic">//是则调用子View的dispatchTouchEvent
+</span><span style="color:#998;font-style:italic"></span>                            mMotionTarget <span style="color:#000;font-weight:bold">=</span> child<span style="color:#000;font-weight:bold">;</span>
+                            <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">;</span>
+                        <span style="color:#000;font-weight:bold">}</span>
+                    <span style="color:#000;font-weight:bold">}</span>
+                <span style="color:#000;font-weight:bold">}</span>
+            <span style="color:#000;font-weight:bold">}</span>
+        <span style="color:#000;font-weight:bold">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>if内部对子View进行了遍历，最终调用子View的dispatchTouchEvent，然后控件可点击那么dispatchTouchEvent一定会返回true，所以后面的代码就执行不了。</p>
+<p>即 ViewGroup 的onInterceptTouchEvent返回false,不拦截触摸事件时，最终会执行子View的dispatchTouchEvent。</p>
+<p>ViewGroup 的onInterceptTouchEvent返回true,拦截触摸事件，就不会进入if内部，则会执行到后面的程序</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>target <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setLocation</span><span style="color:#000;font-weight:bold">(</span>xf<span style="color:#000;font-weight:bold">,</span> yf<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">(</span>mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span> CANCEL_NEXT_UP_EVENT<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+            ev<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">setAction</span><span style="color:#000;font-weight:bold">(</span>MotionEvent<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">ACTION_CANCEL</span><span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+            mPrivateFlags <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">~</span>CANCEL_NEXT_UP_EVENT<span style="color:#000;font-weight:bold">;</span>
+        <span style="color:#000;font-weight:bold">}</span>
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">super</span><span style="color:#000;font-weight:bold">.</span><span style="color:#008080">dispatchTouchEvent</span><span style="color:#000;font-weight:bold">(</span>ev<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，最后会执行super.dispatchTouchEvent(ev)，执行父类即View的dispatchTouchEvent。</p>
+<p>View的dispatchTouchEvent如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">boolean</span> <span style="color:#900;font-weight:bold">dispatchTouchEvent</span><span style="color:#000;font-weight:bold">(</span>MotionEvent event<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>mOnTouchListener <span style="color:#000;font-weight:bold">!</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">null</span> <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">&amp;</span> <span style="color:#000;font-weight:bold">(</span>mViewFlags <span style="color:#000;font-weight:bold">&amp;</span> ENABLED_MASK<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> ENABLED <span style="color:#000;font-weight:bold">&amp;</span><span style="color:#000;font-weight:bold">&amp;</span>
+            mOnTouchListener<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">onTouch</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000;font-weight:bold">this</span><span style="color:#000;font-weight:bold">,</span> event<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">true</span><span style="color:#000;font-weight:bold">;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">return</span> onTouchEvent<span style="color:#000;font-weight:bold">(</span>event<span style="color:#000;font-weight:bold">)</span><span style="color:#000;font-weight:bold">;</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后又和前面的一样了。执行onTouch或者onTouchEvent。。</p>
+<h2 id="3-">3. 总结</h2>
+<h3 id="heading">传递顺序</h3>
+<p><code>Activity －&gt; PhoneWindow －&gt; DecorView －&gt; ViewGroup －&gt; … －&gt; View </code></p>
+<p>通俗语言总结一下，事件来的时候，</p>
+<p>Activity会询问Window，Window这个事件你能不能消耗，</p>
+<p>Window一看，你先等等，我去问问DecorView他能不能消耗，</p>
+<p>DecorView一看，onInterceptTouchEvent返回false啊，不让我拦截啊，</p>
+<p><strong>(DecorView继承自FrameLayout,FrameLayout是ViewGroup的子类，所以DecorView也是ViewGroup的子类，事件从Activity传到了ViewGroup)</strong></p>
+<p>遍历一下子View吧，问问他们能不能消耗，那个谁，事件按在你的身上了，你看看你能不能消耗，</p>
+<p><strong>假如子View为RelativeLayout</strong></p>
+<p>RelativeLayout一看，也没有让我拦截啊，我也得遍历看看这个事件发生在那个子View上面，</p>
+<p><strong>到这儿事件从ViewGroup传到View上了</strong></p>
+<p>那个TextView,事件在你身上，你能不能消耗了他。TextView一看，消耗不了啊，</p>
+<p>RelativeLayout一看TextView消耗不了啊，mFirstTouchTarget==null啊，得，我自己消耗吧，嗯！一看自己的onTouchEvent也消耗不了啊！那个DecorView事件我消耗不了，</p>
+<p>DecorView一看自己，我也消耗不了，继续往上传，那个Window啊。事件我消耗不了啊，</p>
+<p>Window再告诉Activity事件消耗不了啊。</p>
+<p>Activity还得我自己来啊。调用自己的onTouchEvent，还是消耗不了，算了，不要了。</p>
+<p><strong>最后Activity的onTouchEvent无论返回什么，事件分发都结束。（如果事件在边界范围外默认会返回false）</strong></p>
+<h2 id="heading-1">参考</h2>
+<p><code>https://blog.csdn.net/guolin_blog/article/details/9097463</code></p>
+<p><code>https://blog.csdn.net/guolin_blog/article/details/9153747</code></p>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://www.lixueduan.com">意琦行</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://www.lixueduan.com/post/view-click-event/">https://www.lixueduan.com/post/view-click-event/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/Android/spf13-vim-3-0-release-and-new-website/">Android view</a></li>
+        
+        <li><a href="/post/testimage/testa/">image displayview</a></li>
+        
+        <li><a href="/about/">About</a></li>
+        
+        <li><a href="/archives/">归档</a></li>
+        
+        <li><a href="/search/">搜索</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='https://www.lixueduan.com/tags/Android'>Android</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "illusorycloud/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://www.lixueduan.com/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://www.lixueduan.com">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/Android/slug%E5%8F%AF%E6%8C%87%E5%AE%9Aurl-%E9%BB%98%E8%AE%A4url%E4%B8%BA%E6%96%87%E4%BB%B6%E5%90%8D/" title="Newb">Newb</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/Android/slug%E5%8F%AF%E6%8C%87%E5%AE%9Aurl-%E9%BB%98%E8%AE%A4url%E4%B8%BA%E6%96%87%E4%BB%B6%E5%90%8D/" title="Newa">Newa</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/Android/spf13-vim-3-0-release-and-new-website/" title="Android view">Android view</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/view-click-event/" title="Android view">Android view</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/testimage/testa/" title="image displayview">image displayview</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://www.lixueduan.com/categories/Android/">Android (2)</a></li>
+    
+    <li><a href="https://www.lixueduan.com/categories/Test/">Test (1)</a></li>
+    
+    <li><a href="https://www.lixueduan.com/categories/%E5%88%86%E7%B1%BB/">分类 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://www.lixueduan.com/tags/Android/">Android</a>
+    
+    <a href="https://www.lixueduan.com/tags/Test/">Test</a>
+    
+    <a href="https://www.lixueduan.com/tags/%E6%A0%87%E7%AD%BE/">标签</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.vaptcha.com/" title="VAPTCHA">智能手势验证码</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://www.lixueduan.com/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+    <div class="container">
+        &copy; 2020 <a href="https://www.lixueduan.com">幻境云图 By 意琦行</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/flysnow-org/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-131397277-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+
+</html>
