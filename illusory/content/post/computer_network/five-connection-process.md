@@ -22,7 +22,7 @@ categories: ["Network"]
 * 5.浏览器解析渲染页面
 * 6.连接结束
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcpip-http-relation-about.jpg)
+![](https://github.com/lixd/blog/raw/master/illusory/content/post/computer_network/images/tcpip-http-relation-about.jpg)
 
 ## 1. DNS解析
 

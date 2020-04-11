@@ -30,7 +30,7 @@ HTTPS-> HTTP-->SSL-->TCP-->IP
 
 　　HTTP协议传输的数据都是未加密的，也就是明文的，因此使用**HTTP协议传输隐私信息非常不安全**，为了保证这些隐私数据能加密传输，于是网景公司设计了SSL（Secure Sockets Layer）协议用于对HTTP协议传输的数据进行加密，从而就诞生了HTTPS。简单来说，**HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，要比HTTP协议安全**。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/https-key-lvalue.jpg)
+![](https://github.com/lixd/blog/raw/master/illusory/content/post/computer_network/images/https-key-lvalue.jpg)
 
 　　**HTTPS和HTTP的区别:**
 
@@ -66,7 +66,7 @@ HTTPS-> HTTP-->SSL-->TCP-->IP
 
 到这里，双方已安全地协商出了同一份秘钥，所有的应用层数据都会用这个秘钥加密后再通过 TCP 进行可靠传输。 
 
-  ![https握手过程](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/https-ssl-connection.png)
+  ![https握手过程](https://github.com/lixd/blog/raw/master/illusory/content/post/computer_network/images/https-ssl-connection.png)
 
 ## 4. HTTPS的优缺点
 

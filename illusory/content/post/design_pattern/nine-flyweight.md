@@ -9,6 +9,8 @@ categories: ["设计模式"]
 
 本文主要介绍了Java23种设计模式中的享元模式，并结合实例描述了享元模式的具体实现，具体优缺点和单例模式的对比。
 
+
+
 <!--more-->
 
 > **[Java设计模式系列文章目录](https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/)**
@@ -59,7 +61,9 @@ categories: ["设计模式"]
 
 围棋中的黑棋和白棋可以是共享的对象，不用每次都创建一个新的对象。这样就只需要创建黑棋和白棋两个对象了。颜色是不会变得，所以是内部状态。落下得位置是随机的，所以作为外部状态。
 
-![pure](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/nine-flyweight-pure.png)
+
+
+![pure](https://github.com/lixd/blog/raw/master/illusory/content/post/design_pattern/images//nine-flyweight-pure.png)
 
 ## 2. 单纯享元模式
 

@@ -33,11 +33,11 @@ categories: ["Network"]
 
 **1) 无差错情况:**
 
-![normal](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-send-normal.jpg)
+![normal](https://github.com/lixd/blog/raw/master/illusory/content/post/computer_network/images/tcp-send-normal.jpg)
 
 发送方发送分组,接收方在规定时间内收到,并且回复确认.发送方再次发送。
 
-**2) 出现差错情况（超时重传）:** [![timeout](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-send-tiemout.jpg)
+**2) 出现差错情况（超时重传）:** [![timeout](https://github.com/lixd/blog/raw/master/illusory/content/post/computer_network/images/tcp-send-tiemout.jpg)
 
 停止等待协议中超时重传是指只要超过一段时间仍然没有收到确认，就重传前面发送过的分组（认为刚才发送过的分组丢失了）。因此每发送完一个分组需要设置一个超时计时器，其重转时间应比数据在分组传输的平均往返时间更长一些。这种自动重传方式常称为 **自动重传请求 ARQ** 。另外在停止等待协议中若收到重复分组，就丢弃该分组，但同时还要发送确认。**连续 ARQ 协议** 可提高信道利用率。发送维持一个发送窗口，凡位于发送窗口内的分组可连续发送出去，而不需要等待对方确认。接收方一般采用累积确认，对按序到达的最后一个分组发送确认，表明到这个分组位置的所有分组都已经正确收到了。
 
@@ -46,7 +46,7 @@ categories: ["Network"]
 - **确认丢失**：当确认消息在传输过程丢失 ![lost](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-send-lost.jpg)A发送M1消息，B收到后，B向A发送了一个M1确认消息，但却在传输过程中丢失。而A并不知道，在超时计时过后，A重传M1消息，B再次收到该消息后采取以下两点措施：
   1. 丢弃这个重复的M1消息，不向上层交付。
   2. 向A发送确认消息。（不会认为已经发送过了，就不再发送。A能重传，就证明B的确认消息丢失）。
-- **确认迟到** ：确认消息在传输过程中迟到 [![late](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-send-late.jpg)A发送M1消息，B收到并发送确认。在超时时间内没有收到确认消息，A重传M1消息，B仍然收到并继续发送确认消息（B收到了2份M1）。此时A收到了B第二次发送的确认消息。接着发送其他数据。过了一会，A收到了B第一次发送的对M1的确认消息（A也收到了2份确认消息）。处理如下：
+- **确认迟到** ：确认消息在传输过程中迟到 [![late](https://github.com/lixd/blog/raw/master/illusory/content/post/computer_network/images/tcp-send-late.jpg)A发送M1消息，B收到并发送确认。在超时时间内没有收到确认消息，A重传M1消息，B仍然收到并继续发送确认消息（B收到了2份M1）。此时A收到了B第二次发送的确认消息。接着发送其他数据。过了一会，A收到了B第一次发送的对M1的确认消息（A也收到了2份确认消息）。处理如下：
   1. A收到重复的确认后，直接丢弃。
   2. B收到重复的M1后，也直接丢弃重复的M1。
 

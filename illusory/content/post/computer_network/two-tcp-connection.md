@@ -16,7 +16,7 @@ categories: ["Network"]
 
 ### 1. 三次握手
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-connection-three.jpg)
+![](https://github.com/lixd/blog/raw/master/illusory/content/post/computer_network/images/tcp-connection-three.jpg)
 
 `step1:第一次握手`
 建立连接时，客户端发送SYN包到服务器，其中包含客户端的初始序号seq=x，并进入**SYN_SENT**状态，等待服务器确认。（其中，SYN=1，ACK=0，表示这是一个TCP连接请求数据报文；序号seq=x，表明传输数据时的第一个数据字节的序号是x）。
@@ -39,7 +39,7 @@ categories: ["Network"]
 
 ### 2. 四次挥手
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-close-connection-four.jpg)
+![](https://github.com/lixd/blog/raw/master/illusory/content/post/computer_network/images/tcp-close-connection-four.jpg)
 
 `step1：第一次挥手`
 首先，客户端发送一个FIN，用来关闭客户端到服务器的数据传送，然后等待服务器的确认。其中终止标志位FIN=1，序列号seq=u。 **客户端**进入**FIN_WAIT1**状态
@@ -104,7 +104,7 @@ Client端收到FIN报文后，"就知道可以关闭连接了，所以发送ACK�
 
 红色为客户端 蓝色为服务端 细箭头为异常变化
 
-![TCP](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-status-map.png)
+![TCP](https://github.com/lixd/blog/raw/master/illusory/content/post/computer_network/images/tcp-status-map.png)
 
 ### 5. 参考
 

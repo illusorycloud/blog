@@ -314,7 +314,5 @@ public class CheckErrorUtils {
 
 记得添加网络权限
 
-![picture](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/android/email-sender.png)
-
 [点击下载Demo](https://github.com/lillusory/EmailForAndroid)
 

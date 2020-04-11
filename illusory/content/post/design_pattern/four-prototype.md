@@ -51,7 +51,7 @@ categories: ["设计模式"]
 
 ### 1.1 原型模式
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/four-prototype.gif)
+![](https://github.com/lixd/blog/raw/master/illusory/content/post/design_pattern/images/four-prototype.gif)
 
 **原型模式的思想就是将一个对象作为原型，对其进行复制、克隆，产生一个和原对象类似的新对象**。简单地说原型模式就是创建复杂对象的时候使用克隆手段来代替新建一个对象。当创建新的对象实例较为复杂时，使用原型模式可以简化对象的创建过程，通过一个已有实例可以提高新实例的创建效率。
 
