@@ -19,6 +19,8 @@ categories: ["Linux"]
 
 安装包下载`jdk-8u191-linux-x64.tar.gz ` 注意32位和64位的别下载错了。
 
+![](https://github.com/lixd/blog/raw/master/images/linux/software-install/jdk1.8-down.png)
+
 命令`uname -a` 查看Linux系统位数。
 
 网址：`https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html`
@@ -51,7 +53,7 @@ categories: ["Linux"]
 
 网址`https://tomcat.apache.org/download-80.cgi`
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/software-install/tomcat8-down.png)
+![](https://github.com/lixd/blog/raw/master/images/linux/software-install/tomcat8-down.png)
 
 1.压缩包上传到虚拟机`/usr/software目录下`
 
@@ -71,4 +73,3 @@ export CATANILA_HOME=/usr/local/tomcat
 ```
 
 5.解析该文件 命令`source /etc/profile`
-

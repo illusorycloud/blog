@@ -63,7 +63,7 @@ categories: ["设计模式"]
 
 
 
-![pure](https://github.com/lixd/blog/raw/master/illusory/content/post/design_pattern/images//nine-flyweight-pure.png)
+![pure](https://github.com/lixd/blog/raw/master/images/java/design_pattern/nine-flyweight-pure.png)
 
 ## 2. 单纯享元模式
 

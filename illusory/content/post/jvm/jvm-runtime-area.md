@@ -13,7 +13,7 @@ categories: ["Java"]
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
-![Java运行时数据区](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/jvm/runtime-data-areas.png)
+![Java运行时数据区](https://github.com/lixd/blog/raw/master/images/java/jvm/runtime-data-areas.png)
 
 **线程私有的**：`程序计数器` 、`虚拟机栈`、`本地方法栈`
 

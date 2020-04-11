@@ -21,11 +21,11 @@ categories: ["Java"]
 - 业务逻辑层  Service   具体的业务操作 
 - 数据访问层   Dao  对数据库进行操作,为上层提供数据   
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/ssm/3tier.png)
+![](https://github.com/lixd/blog/raw/master/images/java/ssm/3tier.png)
 
 为了更好的降低各层间的耦合度，在三层架构程序设计中，采用面向抽象编程。即上层对下层的调用，是通过接口实现的。而下层对上层的真正服务提供者，是下层接口的实现类。服务标准（接口）是相同的，服务提供者（实现类）可以更换。这就实现了层间的耦合。 
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/ssm/3tier-interface.png)
+![](https://github.com/lixd/blog/raw/master/images/java/ssm/3tier-interface.png)
 
 
 
@@ -37,7 +37,7 @@ categories: ["Java"]
 - **View（视图）** - 视图代表模型包含的数据的可视化。
 - **Controller（控制器）** - 控制器作用于模型和视图上。它控制数据流向模型对象，并在数据变化时更新视图。它使视图与模型分离开。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/ssm/mvc.png)
+![](https://github.com/lixd/blog/raw/master/images/java/ssm/mvc.png)
 
 ## 3.MVC与三层架构
 
@@ -57,7 +57,7 @@ SSM即SpringMVC、Spring、Mybatis三个框架。它们在三层架构中所处�
 - MyBatis：作为 Dao层的实现者，完成对数据库的增、删、改、查功能。
 - Spring：以整个应用大管家的身份出现。整个应用中所有的Bean的生命周期行为，均由Spring来管理。即整个应用中所有对象的创建、初始化、销毁，及对象间关联关系的维护，均由Spring进行管理。
 
- ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/ssm/3tier-ssm.jpg)
+ ![](https://github.com/lixd/blog/raw/master/images/java/ssm/3tier-ssm.jpg)
 
 ## 5.SSM框架配置
 

@@ -93,7 +93,7 @@ public class Outer {
 
 首先看编译后的文件， 和普通的内部类一样， 定义在方法中的内部类在编译之后， 也有自己独立的 class 文件：
 
-![inner](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/java/%E5%86%85%E9%83%A8%E7%B1%BB-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F-class.png)
+![inner](https://github.com/lixd/blog/raw/master/images/java/javase/innerclass-localvar.png)
 
 #### 1. 反编译
 

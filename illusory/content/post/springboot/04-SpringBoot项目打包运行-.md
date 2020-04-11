@@ -79,7 +79,7 @@ public class HelloApplication {
 
 然后用maven打包。
 
-![SpringBoot打包](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/project-package.png)
+![SpringBoot打包](https://github.com/lixd/blog/raw/master/images/java/springboot/project-package.png)
 
 ```java
 [INFO] --- maven-jar-plugin:3.1.1:jar (default-jar) @ hello ---
@@ -101,7 +101,7 @@ public class HelloApplication {
 
 SpringBoot内置了一个Tomcat，可以直接`java -jar jarName`运行。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/jar-run.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/jar-run.png)
 
 浏览器访问`http://localhost:8080/hello`出现`hello illusoryCloud`说明运行起来了。
 

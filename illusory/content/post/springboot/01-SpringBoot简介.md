@@ -73,25 +73,25 @@ Spring Boot 可以称之为 **新一代 JavaEE 开发标准**；随着动态语�
 
 - 1. 打开 IDEA -> New Project -> Spring Initializr
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/first-spring-boot-1.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/first-spring-boot-1.png)
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/first-spring-boot-2.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/first-spring-boot-2.png)
 
 - 2.填写项目信息
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/first-spring-boot-3.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/first-spring-boot-3.png)
 
 - 3.选择 Spring Boot 版本及 Web 开发所需的依赖
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/first-spring-boot-4.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/first-spring-boot-4.png)
 
 - 4.保存项目到指定目录
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/first-spring-boot-5.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/first-spring-boot-5.png)
 
 ### 3.2 工程目录结构
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/first-spring-boot-6.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/first-spring-boot-6.png)
 
 一个标准的maven项目。
 
@@ -178,7 +178,7 @@ public class HelloSpringBootApplication {
 
 其中test是都会有的，然后web则是前面勾选的模块。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/first-spring-boot-7.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/first-spring-boot-7.png)
 
 可以看到已经依赖了Spring各大组件，同时还依赖了一个Tomcat,所以SpringBoot项目是可以独立运行的，因为内置了Tomcat。
 
@@ -290,13 +290,13 @@ public @interface EnableAutoConfiguration {
 
 这个注解也是一个派生注解，其中的关键功能由`@Import({AutoConfigurationImportSelector.class})`提供，其导入的AutoConfigurationImportSelector的selectImports()方法通过SpringFactoriesLoader.loadFactoryNames()扫描所有具有META-INF/spring.factories的jar包。spring-boot-autoconfigure-x.x.x.x.jar里就有一个这样的spring.factories文件。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/first-spring-boot-8.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/first-spring-boot-8.png)
 
 最终`@EnableAutoConfiguration`注解通过`@SpringBootApplication`被间接的标记在了Spring Boot的启动类上。在`SpringApplication.run(...)`的内部就会执行`selectImports()`方法，找到所有JavaConfig自动配置类的全限定名对应的class，然后将所有自动配置类加载到Spring容器中。
 
 Spring Boot关于自动配置的源码在spring-boot-autoconfigure-x.x.x.x.jar中：
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/first-spring-boot-9.png)
+![](https://github.com/lixd/blog/raw/master/images/java/springboot/first-spring-boot-9.png)
 
 可以看到SpringBoot提供了很多的默认配置，在我们没有手动配置时就会使用提供的默认配置。SpringBoot提倡的`约定大于配置`。
 

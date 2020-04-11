@@ -370,7 +370,7 @@ ES:
 192.168.0.2:9200
 ```
 
-![es]( https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/elasticsearch/es-welcome.png )
+![es](https://github.com/lixd/blog/raw/master/images/elasticsearch/es-welcome.png)
 
 kibana:
 
@@ -378,7 +378,7 @@ kibana:
 192.168.0.2:5601
 ```
 
-![kibana]( https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/elasticsearch/kibana-es-monitoring.png )
+![kibana](https://github.com/lixd/blog/raw/master/images/elasticsearch/kibana-es-monitoring.png)
 
 
 
@@ -388,7 +388,7 @@ head:
  192.168.0.2:9100
 ```
 
-![es-head]( https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/elasticsearch/es-head.png )
+![es-head](https://github.com/lixd/blog/raw/master/images/elasticsearch/es-head.png)
 
 
 

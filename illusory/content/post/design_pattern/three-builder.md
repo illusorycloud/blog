@@ -51,7 +51,7 @@ categories: ["设计模式"]
 
 > 建造者模式是将一个复杂的对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/three-builder.jpg)
+![](https://github.com/lixd/blog/raw/master/images/java/design_pattern/three-builder.jpg)
 
 建造者模式通常包括下面几个角色：
 

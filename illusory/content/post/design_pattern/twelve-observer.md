@@ -52,7 +52,7 @@ categories: ["设计模式"]
 > 让多个观察者对象同时监听某一个主题对象，这个主题对象在状态上发生变化时，会通知所有观察者对象，使他们能够自动更新自己。
 > 在对象之间定义了一对多的依赖，这样一来，当一个对象改变状态，依赖它的对象会收到通知并自动更新。其实就是发布订阅模式，发布者发布信息，订阅者获取信息，订阅了就能收到信息，没订阅就收不到信息。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/twelve-observer.jpeg)
+![](https://github.com/lixd/blog/raw/master/images/java/design_pattern/twelve-observer.jpeg)
 
 **该模式包含四个角色**
 

@@ -43,7 +43,7 @@ private transient Thread exclusiveOwnerThread;
 
 ### 1.3 阻塞队列Node节点的属性
 
-![CLH队列](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/source_code/aqs-wait-queue.png)
+![CLH队列](https://github.com/lixd/blog/raw/master/images/java/javase/aqs-wait-queue.png)
 
 Node 的数据结构其实也挺简单的，就是 `thread` + `waitStatus` + `pre` + `next` 四个属性而已。
 

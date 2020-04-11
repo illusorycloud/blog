@@ -53,7 +53,7 @@ categories: ["设计模式"]
 >
 > **把一个类的接口变换成客户端所期待的另一种接口**
 
-![](https://github.com/lixd/blog/raw/master/illusory/content/post/design_pattern/images/five-adapter.jpeg)
+![](https://github.com/lixd/blog/raw/master/images/java/design_pattern/five-adapter.jpeg)
 
 用到的对象
 

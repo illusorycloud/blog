@@ -34,9 +34,9 @@ git config --global user.email "xueduanli@163.com"  //改成自己的
 
 ### 2.2 配置SSH key
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/2018-12-27-git-ssh-key-set1.png)
+![](https://github.com/lixd/blog/raw/master/images/git/2018-12-27-git-ssh-key-set1.png)
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/2018-12-27-git-ssh-key-set2.png)
+![](https://github.com/lixd/blog/raw/master/images/git/2018-12-27-git-ssh-key-set2.png)
 
 
 

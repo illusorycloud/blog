@@ -53,7 +53,7 @@ categories: ["设计模式"]
 >
 > 策略模式定义了一系列的算法，并将每一个算法封装起来，而且它们还可以相互替换。策略模式让算法独立于使用它的客户而独立变化。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/ten-strategy.png)
+![](https://github.com/lixd/blog/raw/master/images/java/design_pattern/ten-strategy.png)
 
 　　这个模式涉及到三个角色：
 

@@ -25,9 +25,7 @@ Go语言微服务系列文章，使用golang实现微服务，这里选用的是
 
  go-micro的通信流程大至如下
 
-![服务注册与发现](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/go-micro/service-discover.png)
-
-
+![服务注册与发现](https://github.com/lixd/blog/raw/master/images/golang/go-micro/service-discover.png)
 
 `Server`端需要向`Register`注册自己的存在或消亡，这样Client才能知道自己的状态。
 
@@ -39,7 +37,7 @@ Go语言微服务系列文章，使用golang实现微服务，这里选用的是
 
  go-micro 之所以可以高度订制和他的框架结构是分不开的，go-micro 由`8个`关键的 `interface`组成，每一个interface 都可以根据自己的需求重新实现，这8个主要的inteface也构成了go-micro的框架结构。 
 
-![整体架构](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/go-micro/go-micro-8-interface.png)
+![整体架构](https://github.com/lixd/blog/raw/master/images/golang/go-micro/go-micro-8-interface.png)
 
 ### 1.Transort
 

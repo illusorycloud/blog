@@ -27,7 +27,7 @@ categories: ["Shiro"]
 
 ### 1.1 身份和凭
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/ShiroFeatures_Authentication.png)
+![](https://github.com/lixd/blog/raw/master/images/shiro/ShiroFeatures_Authentication.png)
 
 需要提供身份和凭证给 Shiro。
 
@@ -39,7 +39,7 @@ Princirpals/Credentials的常见组合：账号+密码。在 Shiro 中使用`Use
 
 ### 1.2 认证流程
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/ShiroAuthenticationSequence.png)
+![](https://github.com/lixd/blog/raw/master/images/shiro/ShiroAuthenticationSequence.png)
 
 
 
@@ -333,7 +333,7 @@ public class CredentialsMatcherLimit extends SimpleCredentialsMatcher {
 
 ## 5. Authorization 授权
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/ShiroFeatures_Authorization.png)
+![](https://github.com/lixd/blog/raw/master/images/shiro/ShiroFeatures_Authorization.png)
 
 ### 5.1 简介
 
@@ -351,7 +351,7 @@ public class CredentialsMatcherLimit extends SimpleCredentialsMatcher {
 
 
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/ShiroAuthorizationSequence.png)
+![](https://github.com/lixd/blog/raw/master/images/shiro/ShiroAuthorizationSequence.png)
 
 
 

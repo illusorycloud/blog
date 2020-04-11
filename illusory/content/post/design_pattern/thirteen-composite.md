@@ -57,7 +57,7 @@ categories: ["设计模式"]
 > 文件夹可以包含文件和文件夹，但文件却没有这些功能。所以实现的时候需要单独实现。
 > 如果用组合模式的话，将文件和文件夹看成一个整体。都是文件。当做抽象的文件。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/thirteen-composite.jpg)
+![](https://github.com/lixd/blog/raw/master/images/java/design_pattern/thirteen-composite.jpg)
 
 ## 2. 代码实现
 

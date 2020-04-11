@@ -19,7 +19,7 @@ categories: ["Linux"]
 
 这里用到的客户端工具是`Xshell`,通过该工具连上服务器后就可以在自己的电脑上操作了。而且还可以开多个窗口，比较方便。
 
-![xshell](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/network-set/xshell-use.png)
+![xshell](https://github.com/lixd/blog/raw/master/images/linux/network-set/xshell-use.png)
 
 这里新建连接时需要输入要连接的服务器的IP和端口号，账户和密码，端口号默认是22，一般不用改。
 
@@ -49,13 +49,13 @@ NAT模式下，虚拟机会动态获取IP,虽然有自己的IP但是最终上网
 
 windows下命令行输入 `ipconfig` 即可获取到本机IP.
 
-![ipconfig](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/network-set/ip-query.png)
+![ipconfig]( https://github.com/lixd/blog/raw/master/images/linux/network-set/ip-query.png ip-query.png)
 
 然后通过VMware软件对网络进行配置。
 
-![vmware](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/network-set/ip-set-way.png)
+![vmware]( https://github.com/lixd/blog/raw/master/images/linux/network-set/ip-query.png ip-set-way.png)
 
-![static ip](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/network-set/vm-ip-set.png)
+![static ip]( https://github.com/lixd/blog/raw/master/images/linux/network-set/ip-query.png vm-ip-set.png)
 
 接着在虚拟机中配置具体网络信息。
 

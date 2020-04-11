@@ -73,7 +73,7 @@ categories: ["设计模式"]
 
 ## 2. 简单工厂模式
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/two-easy-factory.png)
+![](https://github.com/lixd/blog/raw/master/images/java/design_pattern/two-easy-factory.png)
 
 ```java
 /**

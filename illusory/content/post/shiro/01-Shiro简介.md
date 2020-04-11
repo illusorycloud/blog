@@ -33,21 +33,19 @@ RBAC：`Role-Based Access Control `基于角色的访问控制
 
 菜单表中存放所有的功能，角色表中设置多种角色(职位)，权限赋给角色，然后在将角色关联到用户上，这样就不用给每个用户都赋值权限了。
 
-![rbac1.0](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/rbac-base.png)
-
-
+![rbac1.0](https://github.com/lixd/blog/raw/master/images/shiro/rbac-base.png)
 
 ### 1.2 RBAC2.0
 
 随着项目的扩大，人数特别特别多了，给每个用户赋角色都很麻烦，然后又添加了一个`用户组表`,对用户进行分组，如果角色也特别特别多，那么在加一个`角色组表`，用户组与用户管理，角色组与角色关联，最后用户组再与角色组关联。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/rbac-usergroup.png)
+![](https://github.com/lixd/blog/raw/master/images/shiro/rbac-usergroup.png)
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/rbac-permission.png)
+![](https://github.com/lixd/blog/raw/master/images/shiro/rbac-permission.png)
 
 
 
-![rbac2.0](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/rbac-all.png)
+![rbac2.0](https://github.com/lixd/blog/raw/master/images/shiro/rbac-all.png)
 
 
 
@@ -59,7 +57,7 @@ Java中安全管理框架有`spring security`和`shiro`，其中`spring security
 
 ### 2.2 名词解释
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/ShiroFeatures_Authentication.png)
+![](https://github.com/lixd/blog/raw/master/images/shiro/ShiroFeatures_Authentication.png)
 
 **Shiro是一个强大易用的Java安全框架,提供了认证、授权、加密和会话管理等功能**。
 
@@ -76,7 +74,7 @@ Java中安全管理框架有`spring security`和`shiro`，其中`spring security
 
 **记住一点，Shiro不会去维护用户、维护权限；这些需要我们自己去设计提供；然后通过相应的接口注入给Shiro即可**。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/shiro-seq.png)
+![](https://github.com/lixd/blog/raw/master/images/shiro/shiro-seq.png)
 
 可以看到：应用代码直接交互的对象是Subject，也就是说Shiro的对外API核心就是Subject；其每个API的含义：
 
@@ -88,7 +86,7 @@ Java中安全管理框架有`spring security`和`shiro`，其中`spring security
 
 ### 2.3 具体架构
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/shiro/shiro-crchitecture.png)
+![](https://github.com/lixd/blog/raw/master/images/shiro/shiro-crchitecture.png)
 
 - **Subject**：主体，可以看到主体可以是任何可以与应用交互的“用户”；
 - **SecurityManager**：相当于SpringMVC中的DispatcherServlet或者Struts2中的FilterDispatcher；是Shiro的心脏；所有具体的交互都通过SecurityManager进行控制；它管理着所有Subject、且负责进行认证和授权、及会话、缓存的管理。

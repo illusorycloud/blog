@@ -51,7 +51,7 @@ categories: ["设计模式"]
 
 > **给某一对象提供一个代理对象，并由代理对象控制对原对象的引用**。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/seven-proxy.png)
+![](https://github.com/lixd/blog/raw/master/images/java/design_pattern/seven-proxy.png)
 
 **代理模式的结构**
 
