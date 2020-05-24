@@ -4,7 +4,6 @@ title = "幻境云图"
 theme = "maupassant"
 ## googleAnalytics代码 格式:UA-XXXXXXXX-X
 googleAnalytics = "UA-131397277-1"
-
 ## 是否禁止URL Path转小写
 disablePathToLower = true
 ## 开启后自动检测内容中的中文(C)/日语(J)/韩语(K)。
@@ -19,13 +18,16 @@ summaryLength = 140
 [params]
   author = "意琦行"
   subtitle = "勿在浮沙筑高台"
-  keywords = "golang,go语言,go语言笔记,幻境云图,java,博客"
-  description = "幻境云图是一个专注于后端技术分享的博客,记录了一个菜鸟从0开始的进阶之路。主要涉及服务端相关知识共享、实践教程、前沿技术共同学习等。包括但不限于数据库,源码分析,分布式,微服务,并发编程,Docker,Kubernetes,Java,Golang等"
+  keywords = "golang,go语言,kubernetes,istio,幻境云图,"
+  description = "幻境云图是一个专注于技术分享的博客,主要涉及服务端相关知识共享、实践教程、前沿技术共同学习等。包括但不限于分布式,微服务,并发编程,Docker,Kubernetes,Java,Golang等"
   busuanzi = true #启用不算子网页统计
   #googleAd = "ca-pub-7693630257897132"  #谷歌广告ca-pub-xxxxxxxxxxxxxx
+  # hm.src = "https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";
+  baiduAnalytics = "2765db46fe986fa867d3cb9e87afdd69" #百度统计
   localSearch = true # 启用本地搜索
   ICP = "渝ICP备20005680号-1"
-  #ISP = ""
+  # 公网安备
+  IS = "xxxx"
   github = "https://github.com/lixd"
 
   # 这里我存放在了主题的static文件夹里，根目录的似乎也可以
