@@ -1,7 +1,7 @@
 ---
 title: "基于Hexo搭建个人博客(五)---压缩篇"
 description: "通过gulp工具压缩静态文件提升网站加载速度"
-date: 2018-11-12 22:00:00
+date: 2018-12-24 22:00:00
 draft: false
 categories: ["Blog"]
 tags: ["Hexo"]

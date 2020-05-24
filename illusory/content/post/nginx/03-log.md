@@ -1,29 +1,15 @@
 ---
-title: "ginx入门教程(三)---日志文件切割"
+title: "Nginx系列(三)---日志文件切割"
 description: "通过cron定时任务实现Nginx的日志文件切割"
 date: 2019-02-16 22:00:00
 draft: false
-tags: ["Nginx"]
 categories: ["Nginx"]
+tags: ["Nginx"]
 ---
 
 本章主要对Nginx服务器的日志文件分析，包括`日志文件切割`与`cron定时任务`语法详解。
 
 <!-- more-->
-
-> **[Nginx入门教程系列文章目录](https://www.lixueduan.com/categories/)**
->
-> [Nginx入门教程(一)---安装与配置](https://www.lixueduan.com/posts/545ed69.html)
->
-> [Nginx入门教程(二)---配置文件详解](https://www.lixueduan.com/posts/5a0a337e.html)
->
-> [Nginx入门教程(三)---日志文件切割](https://www.lixueduan.com/posts/3ebafd31.html)
->
-> [Nginx入门教程(四)---反向代理与负载均衡](https://www.lixueduan.com/posts/930200c5.html)
->
-> ......
->
-> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 
 

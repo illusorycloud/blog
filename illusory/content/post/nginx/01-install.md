@@ -1,29 +1,15 @@
 ---
-title: "Nginx入门教程(一)---安装与配置"
+title: "Nginx系列(一)---安装与配置"
 description: "Nginx安装及其与Apache简单对比"
 date: 2019-02-13 22:00:00
 draft: false
-tags: ["Nginx"]
 categories: ["Nginx"]
+tags: ["Nginx"]
 ---
 
 本章主要对Nginx服务器进行了介绍，同时对Nginx与Apache之间做出了对比，最后记录了如何在Linux下通过解压方式安装Nginx，也对Nginx基本使用做出了说明。
 
 <!-- more-->
-
-> **[Nginx入门教程系列文章目录](https://www.lixueduan.com/categories/)**
->
-> [Nginx入门教程(一)---安装与配置](https://www.lixueduan.com/posts/545ed69.html)
->
-> [Nginx入门教程(二)---配置文件详解](https://www.lixueduan.com/posts/5a0a337e.html)
->
-> [Nginx入门教程(三)---日志文件切割](https://www.lixueduan.com/posts/3ebafd31.html)
->
-> [Nginx入门教程(四)---反向代理与负载均衡](https://www.lixueduan.com/posts/930200c5.html)
->
-> ......
->
-> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 
 
@@ -68,13 +54,13 @@ Nginx 由内核和模块组成。Nginx 的模块从结构上分为`核心模块`
 
 **安装HTTP rewrite module模块**: 
 
-```linux
+```shell
 # yum install pcre pcre-devel
 ```
 
 **安装HTTP zlib模块**: 
 
-```linux
+```shell
 # yum install zlib gzip zlib-devel
 ```
 
@@ -91,7 +77,7 @@ Nginx 由内核和模块组成。Nginx 的模块从结构上分为`核心模块`
 
 进行configure配置，检查是否报错。
 
-```linux
+```shell
 [root@localhost nginx-1.15.9]# ./configure --prefix=/usr/local/nginx
 
 //出现下面的配置摘要就算配置ok
@@ -109,17 +95,15 @@ Configuration summary
 
 **编译安装**:
 
-```linux
+```shell
 [root@localhost nginx-1.15.9]# make&&make install
-
 //出现下面的提示就算编译安装ok
 make[1]: Leaving directory `/usr/local/nginx-1.15.9'
-
 ```
 
 编译安装后多了一个`Nginx`文件夹,在`/usr/local/nginx` 内部又分为四个目录
 
-```nginx
+```shell
 /usr/local/nginx
 			--conf	配置文件
 			--html  网页文件
@@ -129,7 +113,7 @@ make[1]: Leaving directory `/usr/local/nginx-1.15.9'
 
 **查看Nginx版本:**
 
-```linux
+```shell
 [root@localhost nginx]# /usr/local/nginx/sbin/nginx -v
 nginx version: nginx/1.15.9
 //这里是Nginx 1.15.9
@@ -141,15 +125,14 @@ nginx version: nginx/1.15.9
 
 ### 3.1 启动
 
-```linux
+```shell
 [root@localhost sbin]# /usr/local/nginx/sbin/nginx
-
 //这里如果没有报错就说明启动成功了
 ```
 
 查看
 
-```linux
+```shell
 [root@localhost sbin]# ps aux|grep nginx
 root      98830  0.0  0.0  20552   616 ?        Ss   09:57   0:00 nginx: master process /usr/local/nginx/sbin/nginx
 nobody    98831  0.0  0.1  23088  1392 ?        S    09:57   0:00 nginx: worker process
@@ -162,7 +145,7 @@ root      98839  0.0  0.0 112708   976 pts/1    R+   09:57   0:00 grep --color=a
 
 显示如下：
 
-```java
+```txt
 Welcome to nginx!
 If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
 
@@ -176,12 +159,13 @@ Thank you for using nginx.
 
 ### 3.2 常用命令
 
-```linux
-[root@localhost sbin]# /usr/local/nginx/sbin/nginx -s reload   # 重新载入配置文件
-
-[root@localhost sbin]# /usr/local/nginx/sbin/nginx -s reopen   # 重启 Nginx
-
-[root@localhost sbin]# /usr/local/nginx/sbin/nginx -s stop     # 停止 Nginx
+```shell
+# 重新载入配置文件
+[root@localhost sbin]# /usr/local/nginx/sbin/nginx -s reload   
+# 重新打开日志文件
+[root@localhost sbin]# /usr/local/nginx/sbin/nginx -s reopen
+# 停止
+[root@localhost sbin]# /usr/local/nginx/sbin/nginx -s stop     
 ```
 
 ## 4. 参考

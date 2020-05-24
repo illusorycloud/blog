@@ -3,8 +3,8 @@ title: "Linux下安装RabbitMQ"
 description: "通过解压方式在Linux下安装RabbitMQ和Erlang和安装过程中的一些问题"
 date: 2019-01-21 22:00:00
 draft: false
-tags: ["Linux"]
 categories: ["Linux"]
+tags: ["Linux"]
 ---
 
 本章主要讲了如何通过解压方式在Linux下安装RabbitMQ和Erlang，超级详细的安装过程，和安装过程中遇到的一些问题。

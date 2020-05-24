@@ -1,7 +1,7 @@
 ---
 title: "ReentrantLock源码分析"
 description: "Java中的ReentrantLock源码简单分析"
-date: 2018-11-28 16:00:00
+date: 2019-03-15 16:00:00
 draft: false
 categories: ["Java"]
 tags: ["Java"]
@@ -10,8 +10,6 @@ tags: ["Java"]
 本文主要对`ReentrantLock`的源码进行了简单的分析，具体包括`ReentrantLock`的初始化(公平锁和非公平锁)，加锁过程和解锁过程等。
 
 <!--more-->
-
-> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 ## 1. AbstractQueuedSynchronizer
 

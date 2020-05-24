@@ -3,8 +3,8 @@ title: "write your title here"
 description: "a short description of this post"
 date: 2019-12-21
 draft: true
-tags: ["Android"]
-categories: ["Android"]
+categories: ["Go"]
+tags: ["Go"]
 ---
 
 draft: 表示是否草稿 为true则编译时不会编译该文章

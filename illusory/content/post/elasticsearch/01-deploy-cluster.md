@@ -1,10 +1,10 @@
 ---
-title: "ELK(一)---基于docker-compose搭建elasticsearch集群"
+title: "ELK系列(一)---基于docker-compose搭建elasticsearch集群"
 description: "通过docker-compose快速搭建elasticsearch集群"
 date: 2019-12-17 22:00:00
 draft: false
-tags: ["elasticsearch"]
-categories: ["elasticsearch"]
+categories: ["ElasticSearch"]
+tags: ["ElasticSearch"]
 ---
 
 本文主要记录了如何在单机下通过`docker-compsoe`搭建`Elasticsearch`集群和相关插件。包含了：`es集群(6.7.0)`+`ik分词器`+`kibana可视化工具`+`head插件`。
@@ -12,7 +12,7 @@ categories: ["elasticsearch"]
 
 <!--more-->
 
-> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+
 
 ## 1. 概述
 

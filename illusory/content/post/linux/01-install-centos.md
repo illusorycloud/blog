@@ -1,10 +1,10 @@
 ---
 title: "超详细的VMware虚拟机安装CentOS7教程"
 description: "记录了如何通过VMware虚拟机安装Linux，从软件下载到虚拟机安装等等"
-date: 2019-01-14 22:00:00
+date: 2019-01-08 22:00:00
 draft: false
-tags: ["Linux"]
 categories: ["Linux"]
+tags: ["Linux"]
 ---
 
 这是一个十分详细的CentOS7的安装教程，对自己的安装过程做了一个记录。主要记录了如何通过VMware虚拟机安装Linux，从软件下载到虚拟机安装等等。

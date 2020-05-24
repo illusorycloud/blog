@@ -2,7 +2,7 @@
 title: "MySQL存储过程入门教程及实例详解"
 description: "MySQL的存储过程基本使用"
 date: 2019-02-06 22:00:00
-draft: false
+draft: true
 tags: ["MySQL"]
 categories: ["MySQL"]
 ---

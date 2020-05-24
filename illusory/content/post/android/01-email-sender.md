@@ -1,7 +1,7 @@
 ---
 title: "Android平台自动发送邮件demo"
 description: "一个Android平台自动发送邮件的小demo"
-date: 2018-11-18 22:00:00
+date: 2018-12-15 22:00:00
 draft: false
 categories: ["Android"]
 tags: ["Android"]

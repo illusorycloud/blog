@@ -3,8 +3,8 @@ title: "Linux下的网络配置"
 description: "linux如何配置网络，让虚拟机能够连上外网，如何让虚拟机和主机联通"
 date: 2019-01-14 22:00:00
 draft: false
-tags: ["Linux"]
 categories: ["Linux"]
+tags: ["Linux"]
 ---
 
 本章主要讲了linux如何配置网络，让虚拟机能够连上外网，如何让虚拟机和主机联通，同时介绍了ssh客户端工具连接虚拟机。
