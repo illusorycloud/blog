@@ -61,7 +61,7 @@ etcd可以扮演两大角色：
 
 etcd(Server)大体上可以分为`网络层(http(s) server)`、`Raft模块`、`复制状态机(RSM)`和`存储模块`,具体如下：
 
-![]()
+![etcd模块](https://github.com/lixd/blog/blob/master/images/etcd/etcd-server-architecture.png)
 
 
 
