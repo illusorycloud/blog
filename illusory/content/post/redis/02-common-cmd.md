@@ -1,7 +1,7 @@
 ---
 title: "Redis系列教程(二)---redis常用命令"
 description: "redis常用命令汇总"
-date: 2020-02-25 22:00:00
+date: 2020-01-05 22:00:00
 draft: false
 tags: ["Redis"]
 categories: ["Redis"]

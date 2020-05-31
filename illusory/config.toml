@@ -21,13 +21,15 @@ summaryLength = 140
   keywords = "golang,go语言,kubernetes,istio,幻境云图,"
   description = "幻境云图是一个专注于技术分享的博客,主要涉及服务端相关知识共享、实践教程、前沿技术共同学习等。包括但不限于分布式,微服务,并发编程,Docker,Kubernetes,Java,Golang等"
   busuanzi = true #启用不算子网页统计
-  #googleAd = "ca-pub-7693630257897132"  #谷歌广告ca-pub-xxxxxxxxxxxxxx
+  googleAd = "ca-pub-7693630257897132"  #谷歌广告ca-pub-xxxxxxxxxxxxxx
   # hm.src = "https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";
   baiduAnalytics = "2765db46fe986fa867d3cb9e87afdd69" #百度统计
   localSearch = true # 启用本地搜索
-  ICP = "渝ICP备20005680号-1"
+  icp = "渝ICP备20005680号-1"
   # 公网安备
-  IS = "xxxx"
+  is = "渝公网安备 50010302002842号"
+  # 备案编号图标url
+  isimg = "https://www.lixueduan.com/is.png"
   github = "https://github.com/lixd"
 
   # 这里我存放在了主题的static文件夹里，根目录的似乎也可以
