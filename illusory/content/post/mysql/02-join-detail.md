@@ -1,5 +1,5 @@
 ---
-title: "SQL JOIN 语句详解"
+title: "MySQL系列(二)---SQL JOIN 语句详解"
 description: "SQL JOIN 语句详解"
 date: 2020-03-05 22:00:00
 draft: false
@@ -27,9 +27,9 @@ SQL99 标准支持 `交叉连接`、`自然连接`、`ON 连接`、 `USING 连�
 
 `INNER JOIN` 一般译作`内连接`。内连接查询能将左表（表 A）和右表（表 B）中能关联起来的数据连接后返回。
 
-![inner-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/inner-join.png)
+![inner-join](https://github.com/lixd/blog/raw/master/images/mysql/inner-join.png)
 
-![inner-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/inner-join-2.webp)
+![inner-join](https://github.com/lixd/blog/raw/master/images/mysql/inner-join-2.png)
 
 基本语法如下:
 
@@ -109,7 +109,7 @@ on p.height BETWEEN h.height_lowest AND h.height_highest
 
 返回左表与右表之间符合条件的记录的迪卡尔集。
 
-![](E:/lillusory/daily-notes/MicroServer/MySQL/img/cross-join-2.png)
+![cross-join](https://github.com/lixd/blog/raw/master/images/mysql/cross-join-2.png)
 
 基本语法如下:
 
@@ -177,9 +177,9 @@ SELECT b.player_name, b.height FROM player AS a INNER JOIN player AS b ON a.play
 
 `LEFT JOIN` 一般被译作左连接，也写作 `LEFT OUTER JOIN`。左连接查询会返回左表（表 A）中所有记录，右表中关联数据列也会被一起返回(不管右表中有没有关联的数据)。
 
-![left-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/left-join.png)
+![left-join](https://github.com/lixd/blog/raw/master/images/mysql/left-join.png)
 
-![left-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/left-join-2.png)
+![left-join](https://github.com/lixd/blog/raw/master/images/mysql/left-join-2.png)
 
 基本语法如下:
 
@@ -197,9 +197,9 @@ SELECT p.player_name,t.team_name FROM player AS p LEFT JOIN team AS t ON p.team_
 
 `RIGHT JOIN` 一般被译作`右连接`，也写作 `RIGHT OUTER JOIN`。右连接查询会返回右表（表 B）中所有记录，左表中找到的关联数据列也会被一起返回(不管左表中有没有关联的数据)。
 
-![right-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/right-join.png)
+![right-join](https://github.com/lixd/blog/raw/master/images/mysql/right-join.png)
 
-![right-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/right-join-2.png)
+![right-join](https://github.com/lixd/blog/raw/master/images/mysql/right-join-2.png)
 
 基本语法如下:
 
@@ -221,9 +221,9 @@ SELECT p.player_name,t.team_name FROM player AS p RIGHT JOIN team AS t ON p.team
 
 `FULL JOIN` 一般被译作`全连接`，在某些数据库中也叫作 `FULL OUTER JOIN`。 外连接查询能返回左右表里的所有记录，其中左右表里能关联起来的记录被连接后返回。
 
-![full-outer-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/full-outer-join.png)
+![full-join](https://github.com/lixd/blog/raw/master/images/mysql/full-join.png)
 
-![full-outer-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/full-join-2.webp)
+![full-outer-join](https://github.com/lixd/blog/raw/master/images/mysql/full-join-2.png)
 
 基本语法如下:
 
@@ -245,7 +245,7 @@ SELECT p.player_name,t.team_name FROM player AS p FULL JOIN team AS t ON p.team_
 
 返回左表有但右表没有关联数据的记录集。
 
-![left-join-excluding-inner-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/left-join-excluding-inner-join.png)
+![left-join-excluding-inner-join](https://github.com/lixd/blog/raw/master/images/mysql/left-join-excluding-inner-join.png)
 
 例如:
 
@@ -259,7 +259,7 @@ SELECT * FROM A INNER JOIN B ON A.id = B.id WHERE B.id IS NULL
 
 返回右表有但左表没有关联数据的记录集。
 
-![right-join-excluding-inner-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/right-join-excluding-inner-join.png)
+![right-join-excluding-inner-join](https://github.com/lixd/blog/raw/master/images/mysql/right-join-excluding-inner-join.png)
 
 例如:
 
@@ -271,10 +271,10 @@ SELECT * FROM A INNER JOIN B ON A.id = B.id WHERE A.id IS NULL
 
 
 
-### 3. FULL OUTER JOIN EXCLUDING INNER JOIN
+### 3. FULL JOIN EXCLUDING INNER JOIN
 
 返回左表和右表里没有相互关联的记录集。
-![full-outer-join-excluding-inner-join](E:/lillusory/daily-notes/MicroServer/MySQL/img/full-outer-join-excluding-inner-join.png)
+![full-join-excluding-inner-join](https://github.com/lixd/blog/blob/master/images/mysql/full-join-excluding-inner-join.png)
 
 例如:
 
@@ -288,13 +288,13 @@ SELECT * FROM A FULL OUTER JOIN B ON A.id = B.id WHERE A.id IS NULL OR B.id IS N
 
 关于 JOIN ，SQL92 与 SQL99 在写法上有一些差异，不过内在都是相同的。
 
-![sql-joins](E:/lillusory/daily-notes/MicroServer/MySQL/img/sql-joins.jpg)
+![sql-joins](https://github.com/lixd/blog/raw/master/images/mysql/sql-joins.jpg)
 
 
 
 由 [C.L. Moffatt](https://www.codeproject.com/script/Membership/View.aspx?mid=5909363)提供的另一个版本
 
-![sql-joins](E:/lillusory/daily-notes/MicroServer/MySQL/img/sql-joins-m.jpg)
+![sql-joins](https://github.com/lixd/blog/raw/master/images/mysql/sql-joins-m.jpg)
 
 
 
