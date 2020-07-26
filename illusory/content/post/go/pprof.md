@@ -11,8 +11,6 @@ categories: ["Golang"]
 
 <!--more-->
 
-> 参考了官方文档和网上大量的文章教程，加以自己的修改和整理，使其变得更加简单易懂。
-
 ## 1. 概述
 
 ### 1. 是什么
@@ -295,6 +293,47 @@ go tool pprof [binary] [source]
 
 
 
+测试代码如下
+
+```go
+func main() {
+	runtime.SetMutexProfileFraction(1) // 开启对锁调用的跟踪
+	runtime.SetBlockProfileRate(1)     // 开启对阻塞操作的跟踪
+
+	// record cpu info to file
+	file, err := os.Create("./cpu.pprof")
+	if err != nil {
+		fmt.Printf("create cpu pprof failed, err:%v\n", err)
+		return
+	}
+
+	if err := pprof.StartCPUProfile(file); err != nil {
+		fmt.Printf("could not start CPU profile :%v\n", err)
+		return
+	}
+	defer func() {
+		pprof.StopCPUProfile()
+		file.Close()
+	}()
+
+	for i := 0; i < 10; i++ {
+		logic()
+	}
+}
+
+// logic logic code with some bug for test
+func logic() {
+	// normal logic
+	fmt.Println("logic")
+	// bad logic loop
+	for i := 0; i < 1000000000; i++ {
+
+	}
+}
+```
+
+
+
 #### 1. 通过交互式终端使用
 
 例如：分析前面保存的 cpu.pprof
@@ -391,7 +430,7 @@ ROUTINE ======================== main.logic in /home/lixd/17x/projects/hello/tes
 
 大概是这个样子的。
 
-![pprof-svg.png](E:/lillusory/daily-notes/Golang/进阶/Test/pprof/assets/pprof-svg.png)
+![pprof-svg.png](https://github.com/lixd/blog/raw/master/images/golang/pprof/pprof-svg.png)
 
 关于图形的说明： 
 
@@ -423,7 +462,7 @@ go tool pprof -http=:8081 ~/pprof/pprof.samples.cpu.001.pb.gz
 
 在浏览器中即可查看到相关信息了 view 中可以选择查询各种内容：具体如下
 
-![pprof-flame.png](E:/lillusory/daily-notes/Golang/进阶/Test/pprof/assets/pprof-flame.png)
+![pprof-flame.png](https://github.com/lixd/blog/raw/master/images/golang/pprof/pprof-flame.png)
 
 说明：
 
