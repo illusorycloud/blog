@@ -11,8 +11,6 @@ categories: ["Docker"]
 
 <!--more-->
 
-
-
 ## 1. Docker 安装
 
 ### 1. CentOS

@@ -29,7 +29,7 @@ summaryLength = 140
   # 公网安备
   is = "渝公网安备 50010302002842号"
   # 备案编号图标url
-  isimg = "https://www.lixueduan.com/is.png"
+  isp = "https://www.lixueduan.com/is.png"
   github = "https://github.com/lixd"
 
   # 这里我存放在了主题的static文件夹里，根目录的似乎也可以
