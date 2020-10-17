@@ -24,8 +24,11 @@ git clone git@github.com:lixd/maupassant-hugo.git maupassant
 hugo 常用命令
 
 ```shell
-hugo version
+# 查看hugo版本号
+hugo version 
+# 本地运行
 hugo server
+# 生成public文件
 hugo
 ```
 

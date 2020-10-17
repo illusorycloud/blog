@@ -1,6 +1,6 @@
 baseURL = "https://www.lixueduan.com"
 languageCode = "zh-CN"
-title = "幻境云图"
+title = "指月山瀑"
 theme = "maupassant"
 ## googleAnalytics代码 格式:UA-XXXXXXXX-X
 googleAnalytics = "UA-131397277-1"
@@ -18,8 +18,8 @@ summaryLength = 140
 [params]
   author = "意琦行"
   subtitle = "勿在浮沙筑高台"
-  keywords = "golang,go语言,kubernetes,istio,幻境云图,"
-  description = "幻境云图是一个专注于技术分享的博客,主要涉及服务端相关知识共享、实践教程、前沿技术共同学习等。包括但不限于分布式,微服务,并发编程,Docker,Kubernetes,Java,Golang等"
+  keywords = "golang,MySQL,kubernetes,docker,分布式,后端"
+  description = "指月山瀑是一个专注于技术分享的博客,主要涉及服务端相关知识共享、实践教程、前沿技术共同学习等。包括但不限于分布式,微服务,并发编程,Docker,Kubernetes,MySQL,Redis,MQ,Golang等"
   busuanzi = true #启用不算子网页统计
   googleAd = "ca-pub-7693630257897132"  #谷歌广告ca-pub-xxxxxxxxxxxxxx
   # hm.src = "https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";
@@ -44,9 +44,9 @@ summaryLength = 140
 
 ## 友情链接，可以多个
 [[params.links]]
-  title = "VAPTCHA"
-  name = "智能手势验证码"
-  url = "https://www.vaptcha.com/"
+  #title = "VAPTCHA"
+  #name = "智能手势验证码"
+  #url = "https://www.vaptcha.com/"
 
 
 ## 侧边栏广告位
