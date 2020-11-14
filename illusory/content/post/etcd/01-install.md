@@ -3,7 +3,7 @@ title: "etcd系列(一)---通过docker安装etcd集群"
 description: "`docker-compose`来搭建`etcd`，包括单节点和集群模式"
 date: 2019-09-05
 draft: false
-categories: ["Go"]
+categories: ["Golang"]
 tags: ["etcd"]
 ---
 

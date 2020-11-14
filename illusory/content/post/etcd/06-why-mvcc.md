@@ -3,7 +3,7 @@ title: "etcd系列(六)---etcd多版本并发控制"
 description: "etcd v3为什么要选择MVCC?"
 date: 2020-02-27
 draft: false
-categories: ["Go"]
+categories: ["Golang"]
 tags: ["etcd"]
 ---
 

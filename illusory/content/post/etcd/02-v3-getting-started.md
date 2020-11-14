@@ -3,7 +3,7 @@ title: "etcd系列(二)---clientv3简单使用"
 description: "etcd v3版本入门教程,常见命令的简单使用"
 date: 2019-09-07
 draft: false
-categories: ["Go"]
+categories: ["Golang"]
 tags: ["etcd"]
 ---
 

@@ -3,7 +3,7 @@ title: "etcd系列(三)---etcd之v3API简单分析"
 description: "etcd v3的简单分析及其和v2版本的对比"
 date: 2019-09-10
 draft: false
-categories: ["Go"]
+categories: ["Golang"]
 tags: ["etcd"]
 ---
 
