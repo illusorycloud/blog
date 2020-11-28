@@ -38,7 +38,7 @@ tags: ["Tracing"]
 
 架构图如下
 
-![]()
+![jaeger-architecture.png](https://github.com/lixd/blog/raw/master/images/tracing/jaeger-architecture.png)
 
 - Jaeger Client：Jaeger 客户端，是 Jaeger 针对 OpenTracing API 的特定语言实现，可用于手动或通过与 OpenTracing 集成的各种现有开源框架（例如Flask，Dropwizard，gRPC等）来检测应用程序以进行分布式跟踪。
 - Jaeger Agent：Jaeger 客户端代理，在 UDP 端口上监听所接受的跨度并将其分批发送给 Collector。
@@ -54,7 +54,7 @@ Zipkin由Twitter开源于2012年。
 
 架构图如下
 
-![]()
+![zipkin-architecture.png](https://github.com/lixd/blog/raw/master/images/tracing/zipkin-architecture.png)
 
 - Zipkin Collector：Zipkin 收集器，用于收集/管理链路的追踪信息。
 - Storage：Zipkin 数据存储，支持 Cassandra、ElasticSearch 和 MySQL 等第三方存储。

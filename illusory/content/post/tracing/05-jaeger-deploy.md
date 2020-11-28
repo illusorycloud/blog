@@ -1,7 +1,7 @@
 ---
 title: "分布式链路追踪系列(五)---Jaeger线上环境部署"
 description: "Jaeger线上环境部署"
-date: 2020-05-15	
+date: 2020-11-13	
 draft: false
 categories: ["Tracing"]
 tags: ["Tracing","Jaeger"]
@@ -25,7 +25,7 @@ tags: ["Tracing","Jaeger"]
 
 
 
-![](D:/Home/17x/Projects/daily-notes/Golang/APM/tracing/assets/jaeger-architecture-kafka.png)
+![jaeger-architecture.png](https://github.com/lixd/blog/raw/master/images/tracing/jaeger-architecture.png)
 
 完整架构包含如下组件：
 

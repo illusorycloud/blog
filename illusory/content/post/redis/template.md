@@ -7,7 +7,7 @@ tags: ["Redis"]
 categories: ["Redis"]
 ---
 
-本文主要记录了如何在Linux(CentOS 7)下安装Redis与Redis基本使用与配置。
+Redis 为什么快？一方面是因为它是内存数据库，所有操作都在内存上完成自然很快。另一方面就要归功于它的数据结构。
 
 <!--more-->
 
