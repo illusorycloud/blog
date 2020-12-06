@@ -9,8 +9,6 @@ categories: ["elasticsearch"]
 
 本文主要记录了 Elasticsearch、Kibana 的安装部署流程，及其目录简单介绍。同时也记录了 Elasticsearch 分词器的安装即介绍等。
 
-> 学之前首先还是需要把环境搭起来才方便嘛。
-
 <!--more-->
 
 ## 1. 概述
@@ -25,106 +23,19 @@ categories: ["elasticsearch"]
 
 Logstash TODO
 
-## 2. 解压方式运行
-
-### 1. 安装
-
-`7.0` 版本开始已经自带 JDK 了，因此不需要准备 Java 环境。
-
-下载压缩文件，解压即可使用。
-
-官网地址
-
-```text
-https://www.elastic.co/cn/downloads/elasticsearch
-```
-
-下载后并解压，执行
-
-```shell
-./bin/elasticsearch
-```
-
-即可启动 elasticsearch。
-
-> 不能用 root 启动 否则会报错 
->
-> uncaught exception in thread [main]
-> java.lang.RuntimeException: can not run elasticsearch as root
-
-运行起来后浏览器访问  `http://localhost:9200` 应该可以看到以下信息
-
-```json
-{
-  "name" : "docker",
-  "cluster_name" : "elasticsearch",
-  "cluster_uuid" : "QWvfb7QyQr2rbdOO7iMFcg",
-  "version" : {
-    "number" : "7.8.0",
-    "build_flavor" : "default",
-    "build_type" : "tar",
-    "build_hash" : "757314695644ea9a1dc2fecd26d1a43856725e65",
-    "build_date" : "2020-06-14T19:35:50.234439Z",
-    "build_snapshot" : false,
-    "lucene_version" : "8.5.1",
-    "minimum_wire_compatibility_version" : "6.8.0",
-    "minimum_index_compatibility_version" : "6.0.0-beta1"
-  },
-  "tagline" : "You Know, for Search"
-}
-
-```
-
-### 2. 目录文件结构
-
-| 目录    | 配置文件          | 描述                                                         |
-| ------- | ----------------- | ------------------------------------------------------------ |
-| bin     |                   | 脚本文件，包括启动 Elasticsearch、安装插件，运行统计数据等。 |
-| config  | elasticsearch.yml | 集群配置文件                                                 |
-| JDK     |                   | Java 运行环境                                                |
-| data    | path.data         | 数据文件                                                     |
-| lib     |                   | Java 类库                                                    |
-| logs    | path.logs         | 日志文件                                                     |
-| modules |                   | 包含所有 ES 模块                                             |
-| plugins |                   | 包含所有已安装插件                                           |
-
-### 3. Kibana
-
-同样的，下载压缩文件，直接解压后运行即可。
-
-官网
-
-```text
-https://www.elastic.co/cn/downloads/kibana
-```
-
-执行
-
-```shell
-.//bin/kibana
-```
-
-即可启动，浏览器访问
-
-```shell
-http://localhost:5601
-```
-
-## 3. Docker 安装
+## 2. Docker 安装
 
 使用 docker-compose 一键安装
 
 > docker-compose 安装 [看这里](https://www.lixueduan.com/categories/Docker/)
 
-### 1. 环境准备
+### 0. 环境准备
 
-调整用户 mmap 计数
-
-> 否则启动时可能会出现内存不足的情况
-查看当前限制
+调整用户 mmap 计数,否则启动时可能会出现内存不足的情况
 
 ```shell
-[root@iZ2zeahgpvp1oasog26r2tZ vm]# sysctl vm.max_map_count
+# 查看当前限制
+$ sysctl vm.max_map_count
 vm.max_map_count = 65530
 ```
 
@@ -143,90 +54,132 @@ vi /etc/sysctl.cof
 vm.max_map_count = 262144
 ```
 
-**安装这些 大概需要 4GB 内存，否则可能无法启动**。
-
 同时需要提前创建相关目录,大概结构是这样的
 
 ```shell
 es/
   /data
+  /logs
   /plugins
-   --docker-compose.yaml
+   --es.yml
+   --cerebro.yml
+   --kibana.yml
 ```
 
-### 2. docker-compose.yaml
+手动创建一个 docker 网络
 
-```yaml
-version: '2.2'
+```shell
+$ docker network create elk
+```
+
+同时需要创建对应目录并授予访问权限。
+
+### 1. Elasticsearch
+
+```yml
+# es.yml
+version: '3.2'
 services:
-  # cerebro 是一个简单的 ES 监控工具
-  cerebro:
-    image: lmenezes/cerebro:0.9.2
-    container_name: cerebro
-    ports:
-      - "9000:9000"
-    command:
-      - -Dhosts.0.host=http://elasticsearch:9200
-    networks:
-      - es7net
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.8.0
-    container_name: kibana7
-    environment:
-      - I18N_LOCALE=zh-CN
-      - XPACK_GRAPH_ENABLED=true
-      - TIMELION_ENABLED=true
-      - XPACK_MONITORING_COLLECTION_ENABLED="true"
-    ports:
-      - "5601:5601"
-    networks:
-      - es7net
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
-    container_name: es7_01
+    image: elasticsearch:7.8.0
+    container_name: elk-es
+    restart: always
     environment:
-      - cluster.name=dockeres
-      - node.name=es7_01
+      # 开启内存锁定
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - discovery.type = single-node 
+      # 指定单节点启动
+      - discovery.type=single-node
     ulimits:
+      # 取消内存相关限制  用于开启内存锁定
       memlock:
         soft: -1
         hard: -1
     volumes:
       - ./data:/usr/share/elasticsearch/data
+      - ./logs:/usr/share/elasticsearch/logs
       - ./plugins:/usr/share/elasticsearch/plugins
     ports:
       - 9200:9200
-    networks:
-      - es7net
 
 networks:
-  es7net:
-    driver: bridge
+  default:
+    external:
+      name: elk
 ```
 
-### 3. 启动
-
-一条命令即可启动
+启动命令
 
 ```shell
-# -d 参数 指定后台启动
-docker-compose up -d
+$ docker-compose -f es.yml up
 ```
 
-## 4. 分词器安装
+
+
+### 2. cerebro
+
+cerebro 是一个简单的 ES 集群监控工具
+
+```yml
+# cerebro.yml
+version: '3.2'
+services:
+  cerebro:
+    image: lmenezes/cerebro:0.9.2
+    container_name: cerebro
+    restart: always
+    ports:
+      - "9000:9000"
+    command:
+      - -Dhosts.0.host=http://elk-es:9200
+
+networks:
+  default:
+    external:
+      name: elk
+```
+
+```shell
+$ docker-compose -f cerebro .yml up
+```
+
+
+
+### 3. Kibana
+
+```yml
+# kibana.yml
+version: '3.2'
+services:
+  kibana:
+    image: kibana:7.8.0
+    container_name: elk-kibana
+    restart: always
+    environment:
+      ELASTICSEARCH_HOSTS: http://elk-es:9200
+      I18N_LOCALE: zh-CN
+    ports:
+      - 5601:5601
+
+networks:
+  default:
+    external:
+      name: elk
+```
+
+```shell
+$ docker-compose -f kibana.yml up
+```
+
+## 3. 分词器
 
 ### 1. 安装
 
 分词器安装很简单，一条命令搞定
 
 ```shell
-./elasticsearch-plugin install url
+./elasticsearch-plugin install {分词器的下载地址}
 ```
-
-其中 url 为对应分词器的下载地址
 
 比如安装 ik 分词器
 
@@ -236,12 +189,10 @@ docker-compose up -d
 
 常用分词器列表
 
-* ​	IK 分词器
-  * `https://github.com/medcl/elasticsearch-analysis-ik`
-* 拼音分词器
-  * `https://github.com/medcl/elasticsearch-analysis-pinyin`
-* 其他
-  * 还有很多分词器，不过这两个应该是比较常用的
+* ​	IK 分词器 `https://github.com/medcl/elasticsearch-analysis-ik`
+* 拼音分词器 `https://github.com/medcl/elasticsearch-analysis-pinyin`
+
+
 
 **分词器版本需要和elasticsearch版本对应，并且安装完插件后需重启Es，才能生效**
 
@@ -251,9 +202,9 @@ docker-compose up -d
 
 插件安装其实就是下载 zip 包然后解压到 plugins 目录下。
 
-Docker 安装的话可以通过 Volume 的方式放在宿主机。
+Docker 安装的话可以通过 Volume 的方式放在宿主机，或者进入容器用命令行安装也是一样的。
 
-比如前面创建的 plugins 目录就是存放分词器的，Elasticsearch 启动时会自动加载 该目录下的分词器。
+> 比如前面创建的 plugins 目录就是存放分词器的，Elasticsearch 启动时会自动加载 该目录下的分词器。
 
 ### 2. 测试 
 
