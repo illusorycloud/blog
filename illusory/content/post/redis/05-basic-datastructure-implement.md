@@ -34,7 +34,7 @@ Redis 包含 5 大基本数据类型
 
 二者对应关系如下图所示：
 
-![Redis 数据类型与底层数据结构对应关系][Redis 数据类型与底层数据结构对应关系]
+![data-type-structure][data-type-structure]
 
 
 
@@ -42,7 +42,7 @@ Redis 包含 5 大基本数据类型
 
 > String 也会根据数据长度使用不同的编码方式。
 
-## 2. 简单说明
+## 2. 底层数据类型
 
 **整数数组**
 
@@ -76,7 +76,7 @@ Redis 包含 5 大基本数据类型
 
 表头有三个字段 zlbytes、zltail 和 zllen，分别表示列表长度、列表尾的偏移量和列表中的 entry 个数,表尾还有一个 zlend，表示列表结束。
 
-![压缩列表][压缩列表]
+![ziplist][ziplist]
 
 可以看到各个元素都紧凑的挨在一起，内存利用率极高。
 
@@ -92,13 +92,13 @@ Redis 包含 5 大基本数据类型
 
 如果一个字符串对象保存的是整数值， 并且这个整数值可以用 `long` 类型来表示， 那么字符串对象会将整数值保存在字符串对象结构的 `ptr`属性里面（将 `void*` 转换成 `long` ）， 并将字符串对象的编码设置为 `int` 。
 
-![](./images/string-int.png)
+![string-int][string-int]
 
 **raw**
 
 如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度大于 `39` 字节， 那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串值， 并将对象的编码设置为 `raw` 。
 
-![](./images/string-raw.png)
+![string-raw][string-raw]
 
 
 
@@ -108,7 +108,7 @@ Redis 包含 5 大基本数据类型
 
 `embstr` 编码是专门用于保存短字符串的一种优化编码方式， 这种编码和 `raw` 编码一样， 都使用 `redisObject` 结构和 `sdshdr` 结构来表示字符串对象， 但 `raw` 编码会调用两次内存分配函数来分别创建 `redisObject` 结构和 `sdshdr` 结构， 而 `embstr` 编码则通过调用一次内存分配函数来分配一块连续的空间， 空间中依次包含 `redisObject` 和 `sdshdr` 两个结构，
 
-![](./images/string-embstr.png)
+![string-embstr][string-embstr]
 
 最后要说的是， 可以用 `long double` 类型表示的浮点数在 Redis 中也是作为字符串值来保存的： 如果我们要保存一个浮点数到字符串对象里面， 那么程序会先将这个浮点数转换成字符串值， 然后再保存起转换所得的字符串值。
 
@@ -137,11 +137,10 @@ Redis 默认使用 Jemalloc 分配内存。jemalloc 会分配 8，16，32，64 �
 
 
 
-![](./images/hash-ziplist-obj.png)
+![hash-ziplist-obj][hash-ziplist-obj]
 
 
-
-![](./images/hash-ziplist-item.png)
+![hash-ziplist-item][hash-ziplist-item]
 
 
 
@@ -152,7 +151,7 @@ Redis 默认使用 Jemalloc 分配内存。jemalloc 会分配 8，16，32，64 �
 - 字典的每个键都是一个字符串对象， 对象中保存了键值对的键；
 - 字典的每个值都是一个字符串对象， 对象中保存了键值对的值。
 
-![](./images/hash-hashtable.png)
+![hash-hashtable][hash-hashtable]
 
 
 
@@ -181,7 +180,7 @@ Redis 默认使用 Jemalloc 分配内存。jemalloc 会分配 8，16，32，64 �
 
 `ziplist` 编码的列表对象使用压缩列表作为底层实现， 每个压缩列表节点（entry）保存了一个列表元素。
 
-![](./images/list-ziplist.png)
+![list-ziplist][list-ziplist]
 
 
 
@@ -189,7 +188,7 @@ Redis 默认使用 Jemalloc 分配内存。jemalloc 会分配 8，16，32，64 �
 
  `linkedlist` 编码的列表对象使用双端链表作为底层实现， 每个双端链表节点（node）都保存了一个字符串对象， 而每个字符串对象都保存了一个列表元素。
 
-![](./images/list-linkedlist.png)
+![list-linkedlist][list-linkedlist]
 
 
 
@@ -218,7 +217,7 @@ Redis 默认使用 Jemalloc 分配内存。jemalloc 会分配 8，16，32，64 �
 
 
 
-![](./images/intset.png)
+![intset][intset]
 
 **hashtable**
 
@@ -226,7 +225,7 @@ Redis 默认使用 Jemalloc 分配内存。jemalloc 会分配 8，16，32，64 �
 
 
 
-![](./images/hashtable.png)
+![hashtable][hashtable]
 
 **编码转换**
 
@@ -253,11 +252,10 @@ Redis 默认使用 Jemalloc 分配内存。jemalloc 会分配 8，16，32，64 �
 
 压缩列表内的集合元素按分值从小到大进行排序， 分值较小的元素被放置在靠近表头的方向， 而分值较大的元素则被放置在靠近表尾的方向。
 
-![](./images/ziplist-obj.png)
+![ziplist-obj][ziplist-obj]
 
 
-
-![](./images/ziplist-item.png)
+![ziplist-item][ziplist-item]
 
 **skiplist**
 
@@ -285,11 +283,11 @@ typedef struct zset {
 
  `skiplist` 编码的有序集合对象会是下图(8-16)所示的样子
 
-![](./images/skiplist-obj.png)
+![skiplist-obj][skiplist-obj]
 
  而对象所使用的 `zset` 结构将会是图 8-17 所示的样子。
 
-![](./images/skiplist-item.png)
+![skiplist-item][skiplist-item]
 
 **为什么要用两种数据结构来实现?**
 
@@ -358,3 +356,27 @@ typedef struct zset {
 `《Redis 设计与实现》`
 
 `Redis 核心技术实战`
+
+
+
+[data-type-structure]: https://github.com/lixd/blog/raw/master/images/redis/data-structure/data-type-structure.png
+[ziplist]: https://github.com/lixd/blog/raw/master/images/redis/data-structure/ziplist.png
+
+[string-int]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/string-int.png
+[string-raw]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/string-raw.png
+[string-embstr]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/string-embstr.png
+
+[hash-ziplist-obj]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/hash-ziplist-obj.png
+[hash-ziplist-item]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/hash-ziplist-item.png
+[hash-hashtable]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/hash-hashtable.png
+
+[list-ziplist]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/list-ziplist.png
+[list-linkedlist]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/list-linkedlist.png
+
+[intset]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/intset.png
+[hashtable]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/hashtable.png
+
+[ziplist-obj]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/ziplist-obj.png
+[ziplist-item]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/ziplist-item.png
+[skiplist-obj]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/skiplist-obj.png
+[skiplist-item]:https://github.com/lixd/blog/raw/master/images/redis/data-structure/skiplist-item.png
