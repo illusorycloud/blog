@@ -1,5 +1,5 @@
 ---
-title: "ELK(一)---基于docker-compose搭建elasticsearch集群"
+title: "Elasticsearch 系列(一)---基于docker-compose搭建elasticsearch集群"
 description: "a short description of this post"
 date: 2019-12-17 22:00:00
 draft: true
