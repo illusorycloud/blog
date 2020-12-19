@@ -15,7 +15,15 @@ ELK 是由 Elasticsearch、Logstash、Kibana、Filebeat 等开源软件组成的
 
 ## 1. 概述
 
-![](D:/Home/17x/Projects/daily-notes/Components/ELKF/assets/elkf.png)
+整个流程大概是这样子的：
+
+![basic][basic]
+
+完整架构如下所示：
+
+![advanced][advanced]
+
+
 
 **Elasticsearch**
 
@@ -29,7 +37,7 @@ Elasticsearch是一个高度可扩展全文搜索和分析引擎，基于 Apache
 
 数据分析和可视化平台。通常与 Elasticsearch 配合使用，对其中数据进行搜索、分析和以统计图表的方式展示。
 
-**Filebeat **
+**Filebeat**
 
 轻量级的采集器，主要用于从日志文件中采集日志。
 
@@ -235,13 +243,11 @@ echo 333 INFO >> elk.log
 
 日志内容如下所示：
 
-![](D:/Home/17x/Projects/daily-notes/Components/ELKF/assets/log.png)
+![log][log]
 
 
 
-[elk-basic]:
-
-[elk-advanced]:
-
-[elk-log]:
+[basic]:https://github.com/lixd/blog/raw/master/images/elasticsearch/elk/basic.png
+[advanced]:https://github.com/lixd/blog/raw/master/images/elasticsearch/elk/advanced.png
+[log]:https://github.com/lixd/blog/raw/master/images/elasticsearch/elk/log.png
 

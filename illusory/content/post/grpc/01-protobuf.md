@@ -1,233 +1,165 @@
 ---
-title: "gRPC入门教程(一)---Protobuf安装与基本使用"
-description: "使用gRPC之前当然要安装Protobuf咯"
-date: 2019-07-25 22:00:00
+title: "gRPC系列(一)---Protobuf"
+description: "Protobuf基本使用"
+date: 2020-12-18 22:00:00
 draft: false
 tags: ["gRPC"]
 categories: ["gRPC"]
 ---
 
-本文主要记录了 Windows & Linux 环境下 Protobuf 的安装与基本使用教程。
+本文主要记录了 Protobuf 的基本使用。包括 编译器 protoc 、Go Plugins 安装及 .proto文件定义、编译等。
 
 <!--more-->
 
 ## 1. 概述
 
-Protocol buffers是一个灵活的、高效的、自动化的用于对结构化数据进行序列化的协议，与XML、json相比，Protocol buffers序列化后的码流更小、速度更快、操作更简单。
+**Protocol buffers** 是一种语言无关、平台无关的可扩展机制或者说是**数据交换格式**，用于**序列化结构化数据**。与XML、json相比，Protocol buffers 序列化后的码流更小、速度更快、操作更简单。
 
-## 2. Windows
+> Protocol buffers are a language-neutral, platform-neutral extensible mechanism for serializing structured data.
 
-### 1. 安装 protoc
 
-protoc 用来将`.proto`文件转化为自己使用的语言格式，我使用的是 Go 语言，所以还要下载一个与 protoc 配合的插件，一会再说这个插件。
 
-**下载地址**
+## 2. Protocol Compiler
 
-```go
+protoc 用于编译 protocolbuf (.proto文件) 和 protobuf 运行时。
+
+> protoc 是 C++ 写的，比较简单的安装方式是直接下载编译好的二进制文件。
+
+release 版本下载地址如下
+
+```json
 https://github.com/protocolbuffers/protobuf/releases
 ```
 
-我这里是 windows，所以下载的是`[protoc-3.8.0-win64.zip]`,下载后解压然后配置 path 环境变量。
+> 下载操作系统对应版本然后解压然后配置一下环境变量即可。
 
-### 2. 安装插件
+比如`windows`就下载`protoc-3.14.0-win64.zip` 然后把解压后的`xxx\protoc-3.14.0-win64\bin`配置到环境变量。
 
-`protoc-gen-go` 是用来将 protobuf  文件转换成 Go 语言代码的一个插件
+`linux`则下载`protoc-3.14.0-linux-x86_64.zip`
 
-github 地址：`https://github.com/golang/protobuf`
-
-使用以下命令将会自动把`protoc-gen-go`安装到`$GOPATH/bin`目录下
-
-```go
-go get -u github.com/golang/protobuf/protoc-gen-go
-```
-
-goprotobuf 还有另外两个插件
-
-- protoc-gen-gogo：和protoc-gen-go生成的文件差不多，性能也几乎一样(稍微快一点点)
-- protoc-gen-gofast：生成的文件更复杂，性能也更高(快5-7倍)
-
-```go
-//gogo
-go get github.com/gogo/protobuf/protoc-gen-gogo
- 
-//gofast
-go get github.com/gogo/protobuf/protoc-gen-gofast
-```
-
-
-
-### 3. 编写一个proto文件
-
-`derssbook.proto`
-
-```protobuf
-syntax = "proto3";
-package go_protoc;
-// 新版插件中 必须 配置 option go_package = "xxx";
-option go_package = "/pb";
-
-message Person {
-  string name = 1;
-  int32 id = 2;
-  string email = 3;
-
-  enum PhoneType {
-    MOBILE = 0;
-    HOME = 1;
-    WORK = 2;
-  }
-
-  message PhoneNumber {
-    string number = 1;
-    PhoneType type = 2;
-  }
-
-  repeated PhoneNumber phones = 4;
-
-}
-
-message AddressBook {
-  repeated Person people = 1;
-}
-```
-
-### 4. 编译
-
-**编译命令**
-
-```go
-$ protoc --proto_path=IMPORT_PATH --cpp_out=DST_DIR --java_out=DST_DIR --python_out=DST_DIR --go_out=DST_DIR --ruby_out=DST_DIR --javanano_out=DST_DIR --objc_out=DST_DIR --csharp_out=DST_DIR path/to/file.proto
-```
-
-这里详细介绍 golang 的编译姿势:
-
-- `-I` 参数：指定 import 路径，可以指定多个`-I`参数，编译时按顺序查找，不指定时默认查找当前目录
-- `--go_out` ：golang 编译支持，支持以下参数
-  - `plugins=plugin1+plugin2` - 指定插件，目前只支持 grpc，即：`plugins=grpc`
-  - `M` 参数 - 指定导入的 .proto 文件路径编译后对应的 golang 包名(不指定本参数默认就是`.proto`文件中`import`语句的路径)
-  - `import_prefix=xxx` - 为所有`import`路径添加前缀，主要用于编译子目录内的多个 proto 文件，这个参数按理说很有用，尤其适用替代一些情况时的`M`参数，但是实际使用时有个蛋疼的问题导致并不能达到我们预想的效果，自己尝试看看吧
-  - `import_path=foo/bar` - 用于指定未声明`package`或`go_package`的文件的包名，最右面的斜线前的字符会被忽略
-  - 末尾 `:编译文件路径  .proto文件路径(支持通配符)`
-
-```go
-//官方
-protoc --go_out=. derssbook.proto
-
-//gogo
-protoc --gogo_out=. derssbook.proto
- 
-//gofast
-protoc --gofast_out=. derssbook.proto
-```
-
-编译后会生成一个`derssbook.pb.go`文件。
-
-到此为止就 ok 了。
-
-## 3. Linux
-
-
-### 1. 安装 protoc
-
-下载对应平台的二进制文件,配置环境变量即可。
-
-> 也可以选择编译安装
+解压
 
 ```sh
-https://github.com/protocolbuffers/protobuf/releases
+$ unzip protoc-3.14.0-linux-x86_64.zip -d protoc-3.14.0-linux-x86_64
 ```
 
-`protoc-3.12.3-linux-x86_64.zip`
+新增环境变量
 
 ```shell
-unzip protoc-3.12.3-linux-x86_64.zip -d protoc-3.12.3-linux-x86_64
+$ sudo vim /etc/profile 
 ```
 
-解压后配置环境变量
+增加如下内容
 
 ```shell
-vim /etc/profile 
+#记得改成自己的路径
+export PATH=$PATH:/home/lixd/17x/protoc-3.14.0-linux-x86_64/bin
 ```
-
-`path`中增加`protoc`文件所在路径
-
-```shell
-export PATH=$PATH:/home/lixd/17x/protoc-3.12.3-linux-x86_64/bin
-```
-
-我这里的路径是`/usr/local/17x/protoc-3.12.3-linux-x86_64/bin`
 
 使其生效
 
 ```shell
-source /etc/profile
+$ source /etc/profile
 ```
 
-任意位置输入`protoc --version`出现以下结果则成功。
+
+
+查看是否安装成功
 
 ```sh
-root@17x:/usr/local# protoc --version
-libprotoc 3.12.3
+$ protoc --version
+libprotoc 3.14.0
 ```
 
-### 2. 安装插件
+## 3. Go Plugins
 
-`protoc-gen-go` 是用来将 protobuf 文件转换成 Go 语言代码的一个插件
+出了安装 protoc 之外还需要安装各个语言对应的编译插件，我用的 Go 语言，所以还需要安装一个 Go 语言的编译插件。
 
 ```sh
-# 官方版
-go get -u github.com/golang/protobuf/protoc-gen-go
-# gofast
-go get github.com/gogo/protobuf/protoc-gen-gofast
+go get google.golang.org/protobuf/cmd/protoc-gen-go
 ```
 
-其中`gofast`会比官方的性能好些，生成出来的问题也更复杂。
 
-### 3. 编写 proto 文件
+
+## 4. Demo
+
+### 1. 创建.proto 文件
+
+`derssbook.proto`
 
 ```protobuf
+//声明proto的版本 只能 是3，才支持 gRPC
 syntax = "proto3";
-package go_protoc;
-// 新版插件中 必须 配置 option go_package = "xxx";
-option go_package = "/pb";
+//package 声明 包名 golang对包名比较严格 所以这里需要指定一下
+package helloworld;
 
-message Person {
-  string name = 1;
-  int32 id = 2;
-  string email = 3;
-
-  enum PhoneType {
-    MOBILE = 0;
-    HOME = 1;
-    WORK = 2;
-  }
-
-  message PhoneNumber {
-    string number = 1;
-    PhoneType type = 2;
-  }
-
-  repeated PhoneNumber phones = 4;
-
+// service 定义一个服务
+service Hello {
+    // rpc 定义一个rpc调用方法
+    rpc SayHello (HelloReq) returns (HelloRep) {
+    }
 }
 
-message AddressBook {
-  repeated Person people = 1;
+//  message 类似于struct
+// request
+message HelloReq {
+    string name = 1;
 }
+
+//  response
+message HelloRep {
+    string message = 1;
+}
+
 ```
 
-### 4. 编译
+### protoc 编译
+
+**编译命令**
 
 ```sh
-#官方
-protoc --go_out=. derssbook.proto
-#gofast
-protoc --gofast_out=. derssbook.proto
+# Syntax: protoc [OPTION] PROTO_FILES
+$ protoc --proto_path=IMPORT_PATH  --go_out=OUT_DIR  --go_opt=paths=source_relative path/to/file.proto
 ```
 
+这里简单介绍一下 golang 的编译姿势:
 
+- **--proto_path或者`-I`** ：指定 import 路径，可以指定多个参数，编译时按顺序查找，不指定时默认查找当前目录。
+  - .proto 文件中也可以引入其他 .proto 文件，这里主要用于**指定被引入文件的位置**。
+- **--go_out**：golang编译支持，指定输出文件路径
+  - 其他语言则替换即可，比如`--java_out`等等
+- **--go_opt**：指定参数，比如`--go_opt=paths=source_relative`就是表明生成文件输出使用相对路径。
+- **path/to/file.proto** ：被编译的 .proto 文件放在最后面
 
-## 4. 小结
+```shell
+$ protoc --go_out=. hello_word.proto
+```
 
-本文主要记录了 `protobuf `安装与插件支持，`.proto`文件的编写与编译等流程。
+编译后会生成一个`hello_word.pb.go`文件。
 
+到此为止就ok了。
+
+## 5. 编译过程
+
+可以把 protoc 的编译过程分成简单的两个步骤：
+
+* 1）解析 .proto 文件，编译成 protobuf 的原生数据结构在内存中保存；
+* 2）把 protobuf 相关的数据结构传递给相应语言的**编译插件**，由插件负责根据接收到的 protobuf 原生结构渲染输出特定语言的模板。
+
+具体过程如图所示：
+
+![](assets/protobuf-process.png)
+
+protoc 中原生包含了部分语言（java、php、python、ruby等等）的编译插件，但是没有 Go 语言的，所以需要额外安装一个插件。
+
+> 具体原生支持见源码`https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/compiler/main.cc`
+
+同样的，后续讲到的 gRPC Plugins、gRPC-Gateway 也是一个 protoc 编译插件，将 .proto 文件编译成对应模块需要的源文件。
+
+## 6. 参考
+
+`https://developers.google.com/protocol-buffers`
+
+`https://github.com/protocolbuffers/protobuf`
+
+`https://studygolang.com/articles/12673`
