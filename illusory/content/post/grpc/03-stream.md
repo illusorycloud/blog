@@ -1,395 +1,410 @@
 ---
-title: "gRPC入门教程(三)---gRPC Stream使用"
+title: "gRPC系列(三)---Stream 推送流"
 description: "gRPC stream使用"
-date: 2019-08-12 22:00:00
+date: 2020-12-20 22:00:00
 draft: false
 tags: ["gRPC"]
 categories: ["gRPC"]
 ---
 
-本文主要讲述了gRPC中的三种Stream的使用，包括`客户端流`、`服务端流`和`双向流`。
+本文主要讲述了 gRPC 中的三种 Stream 的使用，包括`客户端流`、`服务端流`和`双向流`。
 
 <!--more-->
 
 ## 1. 概述
 
-`steam`顾名思义 就是 一种流，可以源源不断的推送数据，很适合传输一些大数据，或者服务端和客户端长时间数据交互，比如客户端可以向服务端订阅 一个数据，服务端就可以利用 stream ，源源不断地推送数据。
+srteam 顾名思义 就是 一种 流，可以源源不断的 推送 数据，很适合 传输一些大数据，或者 服务端 和 客户端 长时间 数据交互，比如 客户端 可以向 服务端 订阅 一个数据，服务端 就 可以利用 stream ，源源不断地 推送数据。
 
 stream的种类:
 
 ```protobuf
 // 客户端推送 服务端 
-rpc GetStream (StreamReqData) returns (stream StreamResData){}
+rpc Sum (stream ClientStreamReq) returns (ClientStreamResp) {}
 // 服务端推送 客户端 
-rpc PutStream (stream StreamReqData) returns (StreamResData){}
+rpc Pow (ServerStreamReq) returns (stream ServerStreamResp) {}
 // 客户端与 服务端 互相 推送 
-rpc AllStream (stream StreamReqData) returns (stream StreamResData){}
+rpc Sqrt (stream AllStreamReq) returns (stream AllStreamResp) {}
 ```
 
-其实双向流 已经 基本退化成 tcp了，grpc 底层为我们 分包了，所以真的很方便。
+其实双向流 已经 基本退化成 TCP 了，gRPC  底层为我们 分包了，所以真的很方便。
 
-经常测试流式调用比同步调用会有一定的效率提升。
+> 同时因为省掉了中间每次建立连接的花费，所以效率上会提升一些。
+
+> gRPC 系列所有代码都在这个[Git仓库](https://github.com/lixd/i-go/tree/master/grpc)
 
 ## 2.服务端推送流
 
-### 2.1 ProtoBuf
+### 2.1 server_stream.proto
 
 ```protobuf
 syntax = "proto3";
-package helloworld;
+option go_package = ".;proto";
+package stream;
 
-service ServerStreamServer {
-    //  服务端推送流
-    rpc ServerStream (ServerStreamReq) returns (stream ServerStreamResp) {
-    }
+//  服务端推送流
+service ServerStream {
+  // 客户端传入一个数,服务端分别返回该数的0到9次方
+  rpc Pow (ServerStreamReq) returns (stream ServerStreamResp) {
+  }
 }
 
 message ServerStreamReq {
-    string data = 1;
+  int64 number = 1;
 }
 
 message ServerStreamResp {
-    string data = 1;
+  int64 number = 1;
 }
 ```
 
-### 2.2 Server
+编译
+
+```sh
+protoc --proto_path=./proto \
+        --go_out=./proto --go_opt=paths=source_relative \
+        --go-grpc_out=./proto --go-grpc_opt=paths=source_relative \
+        ./proto/server_stream.proto
+```
+
+
+
+### 2.2 server_stram_server.go
 
 ```go
 package main
 
 import (
-	"fmt"
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	pro "i-go/grpc/proto"
+	"log"
+	"math"
 	"net"
+
+	"google.golang.org/grpc"
+	pb "i-go/grpc/stream/proto"
 )
 
-const ServerStreamPort = ":50053"
-
 type serverStream struct {
+	pb.UnimplementedServerStreamServer
 }
 
-var ServerStream = &serverStream{}
-
-// ServerStream
+// Pow ServerStreamDemo 客户端发送一个请求 服务端以流的形式循环发送多个响应
 /*
-和客户端流相反 是服务端循环发送 然后发送完成后调用
+1. 获取客户端请求参数
+2. 循环处理并返回多个响应
+3. 返回nil表示已经完成响应
 */
-func (server *serverStream) ServerStream(req *pro.ServerStreamReq, stream pro.ServerStreamServer_ServerStreamServer) error {
-	fmt.Printf("Recv Client Data %v\n", req.Data)
-	for i := 0; i < 5; i++ {
+func (server *serverStream) Pow(req *pb.ServerStreamReq, stream pb.ServerStream_PowServer) error {
+	log.Printf("Recv Client Data %v", req.Number)
+	for i := 0; i < 10; i++ {
 		// 通过 send 方法不断推送数据
-		err := stream.Send(&pro.ServerStreamResp{Data: req.Data})
+		pow := int64(math.Pow(float64(req.Number), float64(i)))
+		err := stream.Send(&pb.ServerStreamResp{Number: pow})
 		if err != nil {
-			log.Error(err.Error())
+			log.Fatalf("Send error:%v", err)
 			return err
 		}
 	}
-	// ? 好像没有close方法 client也能监听到
+	// 返回nil表示已经完成响应
 	return nil
 }
 
 func main() {
-	// 监听端口
-	lis, err := net.Listen("tcp", ServerStreamPort)
+	lis, err := net.Listen("tcp", ":8082")
 	if err != nil {
 		panic(err)
 	}
-	s := grpc.NewServer(grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(GenerateInterceptor)))
-	pro.RegisterServerStreamServerServer(s, &serverStream{})
-	err = s.Serve(lis)
-	if err != nil {
+	s := grpc.NewServer()
+	pb.RegisterServerStreamServer(s, &serverStream{})
+	log.Println("Serving gRPC on 0.0.0.0:8082")
+	if err = s.Serve(lis); err != nil {
 		panic(err)
 	}
 }
-
-func GenerateInterceptor(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-	log.Printf("gRPC method: %s", info.FullMethod)
-	err := handler(srv, ss)
-	if err != nil {
-		log.Printf("gRPC err:  %v", err)
-	}
-	return err
-}
-
 ```
 
 
 
-### 2.3 Client
+### 2.3 server_stream_client.go
 
 ```go
 package main
 
 import (
 	"context"
-	"fmt"
-	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	pro "i-go/grpc/proto"
-	"i-go/utils"
 	"io"
-)
+	"log"
 
-const ServerStreamAddress = "localhost:50053"
+	"google.golang.org/grpc"
+	pb "i-go/grpc/stream/proto"
+)
 
 /*
 1. 建立连接 获取client
-2. 组装req参数并调用方法获取stream
+2. 调用方法获取stream
 3. for循环中通过stream.Recv()获取服务端推送的消息
-4. err==io.EOF则表示服务端关闭stream了 退出
+4. err==io.EOF则表示服务端关闭stream了
 */
 func main() {
-	// 1.建立连接
-	conn, err := grpc.Dial(ServerStreamAddress, grpc.WithInsecure(), grpc.WithBlock())
+	// 1.建立连接 获取client
+	conn, err := grpc.DialContext(context.Background(), "0.0.0.0:8082", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
-	// 1.获取client
-	client := pro.NewServerStreamServerClient(conn)
-	// 2.组装req参数
-	data := &pro.ServerStreamReq{Data: "1"}
+	client := pb.NewServerStreamClient(conn)
 	// 2.调用获取stream
-	stream, err := client.ServerStream(context.Background(), data)
+	stream, err := client.Pow(context.Background(), &pb.ServerStreamReq{Number: 2})
 	if err != nil {
-		logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "ClientStream Recv error"}).Error(err)
+		log.Fatalf("Pow error:%v", err)
 		return
 	}
 
 	// 3. for循环获取服务端推送的消息
 	for {
 		// 3.通过 Recv() 不断获取服务端send()推送的消息
-		// 内部也是调用RecvMsg
-		data, err := stream.Recv()
+		resp, err := stream.Recv()
+		// 4. err==io.EOF则表示服务端关闭stream了 退出
+		if err == io.EOF {
+			log.Fatal("server closed")
+			return
+		}
 		if err != nil {
-			// 4. err==io.EOF则表示服务端关闭stream了 退出
-			if err == io.EOF {
-				fmt.Println("server closed")
-				break
-			}
-			logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "ClientStream Recv error"}).Error(err)
+			log.Printf("Recv error:%v", err)
 			continue
 		}
-		fmt.Printf("Recv Data:%v \n",data)
+		log.Printf("Recv data:%v", resp.Number)
 	}
 }
-
 ```
 
-### 2.4 运行
+### 2.4 run
 
-```go
-先启动服务端再运行客户端
-`客户端` 输出如下
+启动服务端
 
-data:"count:0 client data: 1" 
-data:"count:1 client data: 1" 
-data:"count:2 client data: 1" 
-data:"count:3 client data: 1" 
-data:"count:4 client data: 1" 
-data:"count:5 client data: 1" 
-data:"count:6 client data: 1" 
-data:"count:7 client data: 1" 
-data:"count:8 client data: 1" 
-data:"count:9 client data: 1" 
-data:"count:10 client data: 1" 
-data:"count:11 client data: 1" 
-data:"count:12 client data: 1" 
-data:"count:13 client data: 1" 
-data:"count:14 client data: 1" 
-data:"count:15 client data: 1" 
-data:"count:16 client data: 1" 
-data:"count:17 client data: 1" 
-data:"count:18 client data: 1" 
-data:"count:19 client data: 1" 
-time="2019-07-08T16:57:21+08:00" level=info msg=EOF // 这里服务端推送结束
+```sh
+$ go run server_stram_server.go
+2020/12/17 22:06:14 Serving gRPC on 0.0.0.0:8082
 ```
+
+启动客户端
+
+```sh
+$ go run server_stream_client.go
+2020/12/17 22:10:19 Recv data:1
+2020/12/17 22:10:19 Recv data:2
+2020/12/17 22:10:19 Recv data:4
+2020/12/17 22:10:19 Recv data:8
+2020/12/17 22:10:19 Recv data:16
+2020/12/17 22:10:19 Recv data:32
+2020/12/17 22:10:19 Recv data:64
+2020/12/17 22:10:19 Recv data:128
+2020/12/17 22:10:19 Recv data:256
+2020/12/17 22:10:19 Recv data:512
+2020/12/17 22:10:19 server closed
+```
+
+服务端输出
+
+```sh
+Recv Client Data 2
+```
+
+
+
+
 
 ## 3. 客户端推送流
 
-### 3.1 ProtoBuf
+### 3.1 client_stream.proto
 
 ```protobuf
 syntax = "proto3";
-package helloworld;
+option go_package = ".;proto";
+package stream;
 
-service ClientStreamServer {
-    // 客户端推送流
-    rpc ClientStream (stream ClientStreamReq) returns (ClientStreamResp) {
-    }
+// 客户端推送流
+service ClientStream {
+  // 客户端推送多个整数到服务端,服务端返回这些数之和
+  rpc Sum (stream ClientStreamReq) returns (ClientStreamResp) {
+  }
 }
 
 message ClientStreamReq {
-    string data = 1;
+  int64 data = 1;
 }
 
 message ClientStreamResp {
-    string data = 1;
+  int64 sum = 1;
 }
+```
+
+编译
+
+```sh
+protoc --proto_path=./proto \
+        --go_out=./proto --go_opt=paths=source_relative \
+        --go-grpc_out=./proto --go-grpc_opt=paths=source_relative \
+        ./proto/client_stream.proto
 ```
 
 
 
-### 3.2 Server
+### 3.2 client_stram_server.go
 
 ```go
 package main
 
 import (
-	"fmt"
-	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	pro "i-go/grpc/proto"
-	"i-go/utils"
 	"io"
+	"log"
 	"net"
-	"strings"
+
+	"google.golang.org/grpc"
+	pb "i-go/grpc/stream/proto"
 )
 
-const ClientStreamPort = ":50054"
-
 type clientStream struct {
+	pb.UnimplementedClientStreamServer
 }
-
-var ClientStream = &clientStream{}
 
 // ClientStream 客户端流demo
 /*
 1. for循环中通过stream.Recv()不断接收client传来的数据
-2. err == io.EOF表示客户端已经发送完毕关闭连接了,此时服务端需要返回消息
+2. err == io.EOF表示客户端已经发送完毕关闭连接了,此时在等待服务端处理完并返回消息
 3. stream.SendAndClose() 发送消息并关闭连接(虽然客户端流服务器这边并不需要关闭 但是方法还是叫的这个名字)
 */
-func (server *clientStream) ClientStream(stream pro.ClientStreamServer_ClientStreamServer) error {
-	list := make([]string, 0)
-	// 1.for循环一直接收客户端发送的消息
+func (c *clientStream) Sum(stream pb.ClientStream_SumServer) error {
+	var sum int64
+	// 1.for循环接收客户端发送的消息
 	for {
-		// 2. 通过 Recv() 不断获取服务端send()推送的消息
-		data, err := stream.Recv() // Recv内部也是调用RecvMsg
-		if err != nil {
-			// 3. err == io.EOF表示客户端已经发送完成且关闭stream了
-			if err == io.EOF {
-				fmt.Println("client closed")
-				// 4.SendAndClose 返回并关闭连接
-				// 内部调用SendMsg方法 由于这是客户端流 服务端只能发一次 所以没有调用close方法。
-				err := stream.SendAndClose(&pro.ClientStreamResp{
-					Data: strings.Join(list, ",")})
-				if err != nil {
-					logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "ClientStream send error"}).Error(err)
-					return err
-				}
-			} else {
-				logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "ClientStream Recv error"}).Error(err)
+		// 2. 通过 Recv() 不断获取客户端 send()推送的消息
+		req, err := stream.Recv() // Recv内部也是调用RecvMsg
+		// 3. err == io.EOF表示客户端已经发送完成且关闭stream了
+		if err == io.EOF {
+			log.Println("client closed")
+			// 4.SendAndClose 返回并关闭连接
+			// 在客户端发送完毕后服务端即可返回响应
+			err := stream.SendAndClose(&pb.ClientStreamResp{Sum: sum})
+			if err != nil {
+				log.Fatalf("SendAndClose error:%v", err)
 				return err
 			}
 			return nil
 		}
-		fmt.Printf("Recv data %v \n", data.Data)
-		list = append(list, data.Data)
+		if err != nil {
+			return err
+		}
+		// 累加求和
+		log.Printf("Recved %v", req.Number)
+		sum += req.Number
 	}
 }
 
 func main() {
-	// 监听端口
-	lis, err := net.Listen("tcp", ClientStreamPort)
+	lis, err := net.Listen("tcp", ":8081")
 	if err != nil {
 		panic(err)
 	}
-	newServer := grpc.NewServer()
-	// 注册server
-	pro.RegisterClientStreamServerServer(newServer, &clientStream{})
-	_ = newServer.Serve(lis)
+	server := grpc.NewServer()
+	pb.RegisterClientStreamServer(server, &clientStream{})
+	log.Println("Serving gRPC on 0.0.0.0:8081")
+	if err := server.Serve(lis); err != nil {
+		panic(err)
+	}
 }
-
 ```
 
 
 
-### 3.3 Client
+### 3.3 client_stram_client.go
 
 ```go
 package main
 
 import (
 	"context"
-	"fmt"
-	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	pro "i-go/grpc/proto"
-	"i-go/utils"
-	"strconv"
-)
+	"log"
 
-const ClientStreamAddress = "localhost:50054"
+	"google.golang.org/grpc"
+	pb "i-go/grpc/stream/proto"
+)
 
 /*
 1. 建立连接并获取client
-2. 通过stream.Send()循环发送消息
+2.获取 stream 并通过 Send 方法不断推送数据到服务端
 3. 发送完成后通过stream.CloseAndRecv() 关闭steam并接收服务端返回结果
 */
 func main() {
-	// 1.建立连接
-	conn, err := grpc.Dial(ClientStreamAddress, grpc.WithInsecure(), grpc.WithBlock())
+	// 1.建立连接并获取 client
+	conn, err := grpc.DialContext(context.Background(), "0.0.0.0:8081", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
-	// 1. 获取client
-	client := pro.NewClientStreamServerClient(conn)
+	client := pb.NewClientStreamClient(conn)
 
-	// 获取stream
-	stream, err := client.ClientStream(context.Background())
+	// 2.获取 stream 并通过 Send 方法不断推送数据到服务端
+	stream, err := client.Sum(context.Background())
 	if err != nil {
-		logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "ClientStream Get Client error"}).Error(err)
+		log.Fatalf("Sum() error: %v", err)
 		return
 	}
-
-	for i := 0; i < 5; i++ {
-		// 2.通过 send 方法不断推送数据到server
-		// send方法内部调用的就是SendMsg方法
-		err := stream.Send(&pro.ClientStreamReq{Data: strconv.Itoa(i)})
+	for i := int64(0); i < 10; i++ {
+		err := stream.Send(&pb.ClientStreamReq{Data: i})
 		if err != nil {
-			logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "ClientStream send error"}).Error(err)
-			return
+			log.Fatalf("Send(%v) error: %v", i, err)
 		}
 	}
-	// 3. CloseAndRecv关闭连接并接收服务端返回结果(服务端则根据err==io.EOF来判断client是否关闭stream)
-	// CloseAndRecv内部也只是调用了 CloseSend方法和RecvMsg方法
+
+	// 3. 发送完成后通过stream.CloseAndRecv() 关闭steam并接收服务端返回结果
+	// (服务端则根据err==io.EOF来判断client是否关闭stream)
 	resp, err := stream.CloseAndRecv()
 	if err != nil {
-		logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "ClientStream Recv error"}).Error(err)
+		log.Fatalf("CloseAndRecv() error: %v", err)
 		return
 	}
-	fmt.Printf("Recv %v \n", resp.Data)
+	log.Printf("sum: %v", resp.Sum)
 }
-
 ```
 
 
 
-### 3.4 运行
+### 3.4 run
 
-```go
-先启动服务端再运行客户端
-`服务端` 输出如下
+启动服务端
 
-Recv data 0 
-Recv data 1 
-Recv data 2 
-Recv data 3 
-Recv data 4 
-client closed
-
-// 这里服务端推送结束
-Recv 0,1,2,3,4 
+```sh
+$ go run client_stram_server.go
+2020/12/17 21:31:13 Serving gRPC on 0.0.0.0:8081
 ```
+
+启动客户端
+
+```sh
+$ go run client_stream_client.go
+2020/12/17 21:31:59 sum: 45
+```
+
+服务端输出
+
+```sh
+2020/12/17 21:31:59 Recved 0
+2020/12/17 21:31:59 Recved 1
+2020/12/17 21:31:59 Recved 2
+2020/12/17 21:31:59 Recved 3
+2020/12/17 21:31:59 Recved 4
+2020/12/17 21:31:59 Recved 5
+2020/12/17 21:31:59 Recved 6
+2020/12/17 21:31:59 Recved 7
+2020/12/17 21:31:59 Recved 8
+2020/12/17 21:31:59 Recved 9
+2020/12/17 21:31:59 client closed
+```
+
+
 
 ## 4. 双向推送流
 
-### 4.1 ProtoBuf
+### 4.1 bidirectional_stream.proto
 
 ```protobuf
 syntax = "proto3";
@@ -412,96 +427,90 @@ message AllStreamResp {
 
 
 
-### 4.2 Server
+### 4.2 bidirectional_stream_server.go
 
 ```go
 package main
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	pro "i-go/grpc/proto"
-	"i-go/utils"
 	"io"
+	"log"
+	"math"
 	"net"
-	"strconv"
 	"sync"
-	"time"
+
+	"google.golang.org/grpc"
+	pb "i-go/grpc/stream/proto"
 )
 
-const AllStreamPort = ":50055"
-
-type allStream struct {
+type bidirectionalStream struct {
+	pb.UnimplementedBidirectionalStreamServerServer
 }
 
-var AllStream = &allStream{}
-
-// AllStream 双向流服务端
+// Sqrt 双向流服务端
 /*
 // 1. 建立连接 获取client
 // 2. 调用方法获取stream
-// 3. 开两个goroutine 分别用于Recv()和Send()
+// 3. 开两个goroutine（使用 chan 传递数据） 分别用于Recv()和Send()
 // 3.1 一直Recv()到err==io.EOF(即客户端关闭stream)
 // 3.2 Send()则自己控制什么时候Close 服务端stream没有close 只要跳出循环就算close了。 具体见https://github.com/grpc/grpc-go/issues/444
 */
-func (server *allStream) AllStream(stream pro.AllStreamServer_AllStreamServer) error {
-	waitGroup := sync.WaitGroup{}
-
+func (b *bidirectionalStream) Sqrt(stream pb.BidirectionalStreamServer_SqrtServer) error {
+	var (
+		waitGroup sync.WaitGroup
+		numbers   = make(chan float64)
+	)
 	waitGroup.Add(1)
 	go func() {
-		for i := 0; i < 5; i++ {
-			err := stream.Send(&pro.AllStreamResp{Data: strconv.Itoa(i)})
+		defer waitGroup.Done()
+
+		for v := range numbers {
+			err := stream.Send(&pb.AllStreamResp{Sqrt: math.Sqrt(v)})
 			if err != nil {
-				logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "AllStream Send error"}).Error(err)
+				fmt.Println("Send error:", err)
 				continue
 			}
-			time.Sleep(time.Second)
 		}
-		waitGroup.Done()
 	}()
 
 	waitGroup.Add(1)
 	go func() {
+		defer waitGroup.Done()
 		for {
-			data, err := stream.Recv()
-			if err != nil {
-				if err == io.EOF {
-					fmt.Println("Client Closed")
-					break
-				}
-				logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "AllStream Recv error"}).Error(err)
-				continue
+			req, err := stream.Recv()
+			if err == io.EOF {
+				break
 			}
-			fmt.Printf("Recv Data:%v \n", data.Data)
+			if err != nil {
+				log.Fatalf("Recv error:%v", err)
+			}
+			fmt.Printf("Recv Data:%v \n", req.Number)
+			numbers <- req.Number
 		}
-		waitGroup.Done()
+		close(numbers)
 	}()
-
 	waitGroup.Wait()
 
+	// 返回nil表示已经完成响应
 	return nil
-
 }
 
 func main() {
-	// 监听端口
-	lis, err := net.Listen("tcp", AllStreamPort)
+	lis, err := net.Listen("tcp", ":8083")
 	if err != nil {
 		panic(err)
 	}
 	newServer := grpc.NewServer()
-	// 注册server
-	pro.RegisterAllStreamServerServer(newServer, &allStream{})
-	err = newServer.Serve(lis)
-	if err != nil {
+	pb.RegisterBidirectionalStreamServerServer(newServer, &bidirectionalStream{})
+	log.Println("Serving gRPC on 0.0.0.0:8083")
+	if err = newServer.Serve(lis); err != nil {
 		panic(err)
 	}
 }
-
 ```
 
-### 4.3 Client
+### 4.3 bidirectional_stream_client.go
 
 ```go
 package main
@@ -509,120 +518,154 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	pro "i-go/grpc/proto"
-	"i-go/utils"
 	"io"
-	"strconv"
+	"log"
 	"sync"
 	"time"
+
+	"google.golang.org/grpc"
+	pb "i-go/grpc/stream/proto"
 )
 
-const AllStreamAddress = "localhost:50055"
-
 /*
-// 1. 建立连接 获取client
-// 2. 调用方法获取stream
-// 3. 开两个goroutine 分别用于Recv()和Send()
-// 3.1 一直Recv()到err==io.EOF(即服务端关闭stream)
-// 3.2 Send()则由自己控制
-// 4. 发送完毕调用 stream.CloseSend()关闭stream 必须调用关闭 否则Server会一直尝试接收数据 一直报错...
+1. 建立连接 获取client
+2. 调用方法获取stream
+3. 开两个goroutine 分别用于Recv()和Send()
+	3.1 一直Recv()到err==io.EOF(即服务端关闭stream)
+	3.2 Send()则由自己控制
+4. 发送完毕调用 stream.CloseSend()关闭stream 必须调用关闭 否则Server会一直尝试接收数据 一直报错...
 
 */
 func main() {
+	var(
+		wg  sync.WaitGroup
+	)
+
 	// 1.建立连接
-	conn, err := grpc.Dial(AllStreamAddress, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.DialContext(context.Background(), "0.0.0.0:8083", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
 
 	// 1.new client
-	client := pro.NewAllStreamServerClient(conn)
-	waitGroup := sync.WaitGroup{}
+	client := pb.NewBidirectionalStreamServerClient(conn)
 	// 2. 调用方法获取stream
-	stream, err := client.AllStream(context.Background())
+	stream, err := client.Sqrt(context.Background())
 	if err != nil {
 		panic(err)
 	}
 	// 3.开两个goroutine 分别用于Recv()和Send()
-	waitGroup.Add(1)
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		for {
 			data, err := stream.Recv()
+			if err == io.EOF {
+				fmt.Println("Server Closed")
+				break
+			}
 			if err != nil {
-				if err == io.EOF {
-					fmt.Println("Server Closed")
-					break
-				}
-				logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "AllStream Recv error"}).Error(err)
 				continue
 			}
-			fmt.Printf("Recv Data:%v \n", data.Data)
+			fmt.Printf("Recv Data:%v \n", data.Sqrt)
 		}
-		waitGroup.Done()
 	}()
 
-	waitGroup.Add(1)
+	wg.Add(1)
 	go func() {
-		for i := 0; i < 5; i++ {
-			err := stream.Send(&pro.AllStreamReq{Data: strconv.Itoa(i)})
+		defer wg.Done()
+
+		for i := 0; i < 10; i++ {
+			err := stream.Send(&pb.AllStreamReq{Number: float64(i)})
 			if err != nil {
-				logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "ClientStream Recv error"}).Error(err)
+				log.Printf("Send error:%v\n", err)
 			}
 			time.Sleep(time.Second)
 		}
 		// 4. 发送完毕关闭stream
 		err := stream.CloseSend()
 		if err != nil {
-			logrus.WithFields(logrus.Fields{"Caller": utils.Caller(), "Scenes": "ClientStream CloseSend error"}).Error(err)
+			log.Printf("Send error:%v\n", err)
+			return
 		}
-		waitGroup.Done()
 	}()
-	waitGroup.Wait()
+	wg.Wait()
 }
-
 ```
 
-### 4.4 运行
+### 4.4 run
 
-```go
-先启动服务端再运行客户端
-客户端输出如下
+启动服务端
 
-Recv Data:0 
-Recv Data:1 
-Recv Data:2 
-Recv Data:3 
-Recv Data:4 
+```sh
+$ go run bidirectional_stream_server.go
+2020/12/17 23:43:49 Serving gRPC on 0.0.0.0:8083
+```
+
+启动客户端
+
+```sh
+$ go run bidirectional_stream_client.go
+Recv Data:0
+Recv Data:1
+Recv Data:1.4142135623730951
+Recv Data:1.7320508075688772
+Recv Data:2
+Recv Data:2.23606797749979
+Recv Data:2.449489742783178
+Recv Data:2.6457513110645907
+Recv Data:2.8284271247461903
+Recv Data:3
 Server Closed
-.....
-
-服务端输出如下
-
-Recv Data:0 
-Recv Data:1 
-Recv Data:2 
-Recv Data:3 
-Recv Data:4 
-Client Closed
-....
 ```
+
+服务端输出
+
+```sh
+Recv Data:0
+Recv Data:1
+Recv Data:2
+Recv Data:3
+Recv Data:4
+Recv Data:5
+Recv Data:6
+Recv Data:7
+Recv Data:8
+Recv Data:9
+```
+
+
 
 ## 5. 总结
 
-* 1.每个函数都对应着 完成了 protobuf 里面的 定义。
-* 2.每个函数 形参都有对应的 推送 或者 接收 对象，我们只要 不断循环 Recv(),或者 Send() 就能接收或者推送了！
-* 3.当return出函数，就说明此次 推送 或者 接收 结束了，client 会 对应的 收到消息！
+客户端或者服务端都有对应的 推送 或者 接收 对象，我们只要 不断循环 Recv(),或者 Send() 就能接收或者推送了！
 
-grpc 的 stream 和 go的协程 配合 简直完美。通过流 我们 可以更加 灵活的 实现自己的业务。如:订阅，大数据传输等。
+> gRPC Stream 和 goroutine 配合简直完美。通过 Stream 我们可以更加灵活的实现自己的业务。如 订阅，大数据传输等。
 
-**Client发送完成后需要手动调用Close()方法关闭stream，Server端则退出循环就会自动Close()**
+**Client发送完成后需要手动调用Close()或者CloseSend()方法关闭stream，Server端则`return nil`就会自动 Close**
+
+
+
+**1）服务端推送流**
+
+* 服务端处理完成后`return nil`代表响应完成
+* 客户端通过 `err == io.EOF`判断服务端是否响应完成
+
+**2）客户端推送流**
+
+* 客户端发送完毕通过`CloseAndRecv()`关闭stream 并接收服务端响应
+* 服务端通过 `err == io.EOF`判断客户端是否发送完毕，完毕后使用`SendAndClose()`关闭 stream并返回响应。
+
+**3）双向推送流**
+
+* 客户端服务端都通过stream向对方推送数据
+* 客户端推送完成后通过`CloseSend()`关闭流，通过`err == io.EOF`判断服务端是否响应完成
+* 服务端通过`err == io.EOF`判断客户端是否响应完成,通过`return nil`表示已经完成响应
+
+
 
 ## 6. 参考
 
-`https://blog.csdn.net/weixin_34219944/article/details/87456847`
-
-`https://blog.csdn.net/m0_37595562/article/details/80784101`
+`https://grpc.io/docs/languages/go/basics/#server-side-streaming-rpc`
 
