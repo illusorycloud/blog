@@ -3,7 +3,7 @@ title: "etcd系列(四)---etcd架构及其实现简单分析"
 description: "etcd简单分析及其与zookeeper的区别"
 date: 2020-02-10
 draft: false
-categories: ["Golang"]
+categories: ["etcd"]
 tags: ["etcd"]
 ---
 

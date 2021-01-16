@@ -3,7 +3,7 @@ title: "etcd系列(零)---etcd使用过程中遇到的问题"
 description: "主要记录了etcd的使用过程中遇到的问题及其解决方案"
 date: 2019-09-01
 draft: false
-categories: ["Golang"]
+categories: ["etcd"]
 tags: ["etcd"]
 
 ---

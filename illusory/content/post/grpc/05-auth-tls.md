@@ -222,7 +222,7 @@ $ go run client.go
 
 抓包结果如下
 
-<img src="/assets/grpc-tls-wireshark.png" style="zoom:80%;" />
+![grpc-tls-wireshark][grpc-tls-wireshark]
 
 
 可以看到成功开启了 TLS。
@@ -479,3 +479,7 @@ $ go run client.go
 `https://www.openssl.org/docs/manmaster/`
 
 `https://www.jianshu.com/p/37ded4da1095`
+
+
+
+[grpc-tls-wireshark]:https://github.com/lixd/blog/raw/master/images/grpc/grpc-tls-wireshark.png

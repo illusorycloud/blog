@@ -439,7 +439,7 @@ ok      hello/test/str  5.718s
 >
 > strings.Sprintf  和 add 两个会分配大量内存所以就很慢， string 是只读的，所以每次会创建一个新的 string
 
-**一般推荐使用 strings.buffer，如果字符串很少则可以直接相加也差距不大， 不管什么情况都最好不要使用strings.Sprintf**
+**一般推荐使用 strings.Builder ，如果字符串很少则可以直接相加也差距不大， 不管什么情况都最好不要使用 strings.Sprintf**
 
 ## 5. 参考
 
