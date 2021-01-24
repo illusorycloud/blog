@@ -265,6 +265,6 @@ Pod 重启后最初到达的部分请求可以获取到 Redis 连接，能正常
 [ecs-cpu]:https://github.com/lixd/blog/raw/master/images/redis/connections/ecs-cpu.png
 [ecs-mem]:https://github.com/lixd/blog/raw/master/images/redis/connections/ecs-mem.png
 [ecs-load]:https://github.com/lixd/blog/raw/master/images/redis/connections/ecs-load.png
-[redis-qps-befor]:https://github.com/lixd/blog/raw/master/images/redis/connections/redis-qps-before.png
+[redis-qps-before]:https://github.com/lixd/blog/raw/master/images/redis/connections/redis-qps-before.png
 [redis-qps-after]:https://github.com/lixd/blog/raw/master/images/redis/connections/redis-qps-after.png
 
