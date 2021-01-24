@@ -73,7 +73,7 @@ libprotoc 3.14.0
 
 ## 3. Go Plugins
 
-出了安装 protoc 之外还需要安装各个语言对应的编译插件，我用的 Go 语言，所以还需要安装一个 Go 语言的编译插件。
+出了安装 protoc 之外还需要安装各个语言对应的**编译插件**，我用的 Go 语言，所以还需要安装一个 Go 语言的编译插件。
 
 ```sh
 go get google.golang.org/protobuf/cmd/protoc-gen-go
@@ -88,25 +88,23 @@ go get google.golang.org/protobuf/cmd/protoc-gen-go
 `hello_world.proto`
 
 ```protobuf
-//声明 protobuf 版本 只有 proto3 才支持 gRPC
+//声明proto的版本 只有 proto3 才支持 gRPC
 syntax = "proto3";
-// .表示生成go文件输出在当前目录，proto 表示生成go文件包名为proto
-option go_package = ".;proto";
+// 将编译后文件输出在 github.com/lixd/grpc-go-example/helloworld/helloworld 目录
+option go_package = "github.com/lixd/grpc-go-example/helloworld/helloworld";
 // 指定当前proto文件属于helloworld包
 package helloworld;
 
-// The greeting service definition.
+// 定义一个名叫 greeting 的服务
 service Greeter {
-  // Sends a greeting
+  // 该服务包含一个 SayHello 方法 HelloRequest、HelloReply分别为该方法的输入与输出
   rpc SayHello (HelloRequest) returns (HelloReply) {}
 }
-//
-// The request message containing the user's name.
+// 具体的参数定义
 message HelloRequest {
   string name = 1;
 }
 
-// The response message containing the greetings
 message HelloReply {
   string message = 1;
 }

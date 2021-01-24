@@ -13,7 +13,9 @@ categories: ["gRPC"]
 
 ## 1. 概述
 
-gRPC 是一个高性能、通用的开源RPC框架，其由Google主要面向移动应用开发并基于HTTP/2协议标准而设计，基于ProtoBuf(Protocol Buffers)序列化协议开发，且支持众多开发语言。
+> gRPC 系列相关代码见 [Github][Github]
+
+gRPC 是一个高性能、通用的开源 RPC 框架，其由 Google 主要面向移动应用开发并基于 HTTP/2 协议标准而设计，基于 ProtoBuf(Protocol Buffers) 序列化协议开发，且支持众多开发语言。
 
 与许多 RPC 系统类似，gRPC 也是基于以下理念：**定义一个`服务`，指定其能够被远程调用的方法（包含参数和返回类型）。在服务端实现这个接口，并运行一个 gRPC 服务器来处理客户端调用。在客户端拥有一个`存根`能够像服务端一样的方法**。
 
@@ -21,15 +23,13 @@ gRPC 默认使用 **protocol buffers**，这是 Google 开源的一套成熟的�
 
 
 
-> gRPC 系列所有代码都在这个[Git仓库](https://github.com/lixd/i-go/tree/master/grpc)
-
 ## 2. 环境准备
 
 **1）protoc**
 
-首先需要安装 protocol buffers compile  `protoc ` 和 Go Plugins。
+首先需要安装 protocol buffers compile 即 `protoc ` 和 Go Plugins。
 
-> 具体见 [Protobuf 章节](https://www.lixueduan.com/post/grpc/01-protobuf/)
+> 具体见 [Protobuf 章节][Protobuf 章节]
 
 **2）gRPC**
 
@@ -57,7 +57,7 @@ $ go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 **环境**
 
-首先确保自己的环境是OK的：
+首先确保自己的环境是 OK 的：
 
 * 1）终端输入 protoc --version 能打印出版本信息；
 * 2）$GOPATH/bin 目录下有 `protoc-gen-go`、`protoc-gen-go-grpc` 这两个可执行文件。
@@ -66,92 +66,85 @@ $ go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 * protoc 3.14.0
 * protoc-gen-go v1.25.0
-* gPRC v1.34.0
+* gPRC v1.35.0
 * protoc-gen-go-grpc 1.0.1
 
 **项目结构如下**：
 
 ```sh
-helloworld
+helloworld/
 ├── client
-│   └── client.go
-├── proto     
-│   └── hello_world.proto
+│   └── main.go
+├── helloworld
+│   ├── hello_world_grpc.pb.go
+│   ├── hello_world.pb.go
+│   └── hello_world.proto
 └── server
-    └── server.go
+    └── main.go
 ```
 
 
 
-### 1. 创建.proto文件
+### 1. 编写.proto文件
 
-首先创建一个`hello_world.proto`
+`hello_world.proto`文件内容如下：
 
 ```protobuf
 //声明proto的版本 只有 proto3 才支持 gRPC
 syntax = "proto3";
-// .表示生成go文件存在在当前目录，proto 表示生成go文件报名为proto
-option go_package = ".;proto";
+// 将编译后文件输出在 github.com/lixd/grpc-go-example/helloworld/helloworld 目录
+option go_package = "github.com/lixd/grpc-go-example/helloworld/helloworld";
 // 指定当前proto文件属于helloworld包
 package helloworld;
 
-// The greeting service definition.
+// 定义一个名叫 greeting 的服务
 service Greeter {
-  // Sends a greeting
+  // 该服务包含一个 SayHello 方法 HelloRequest、HelloReply分别为该方法的输入与输出
   rpc SayHello (HelloRequest) returns (HelloReply) {}
 }
-//
-// The request message containing the user's name.
+// 具体的参数定义
 message HelloRequest {
   string name = 1;
 }
 
-// The response message containing the greetings
 message HelloReply {
   string message = 1;
 }
 ```
 
-这里定义了一个服务 `Greeter`，其中有一个 API 名为 `SayHello`。其接受参数为`HelloRequest`类型，返回`HelloReply`类型。
+这里定义了一个服务 `Greeter`，其中有一个方法名为 `SayHello`。其接收参数为`HelloRequest`类型，返回`HelloReply`类型。
 
 服务定义为：
 
 ```cpp
-// The greeting service definition.
+// 定义一个名叫 greeting 的服务
 service Greeter {
-  // Sends a greeting
+  // 该服务包含一个 SayHello 方法 HelloRequest、HelloReply分别为该方法的输入与输出
   rpc SayHello (HelloRequest) returns (HelloReply) {}
 }
 ```
 
-`service`定义了一个 server，其中的 API 可以是以下四种类型：
-
-- `rpc GetFeature(Point) returns (Feature) {}`
-  类似普通的函数调用，客户端发送请求 Point 到服务器，服务器返回响应 Feature.
-- `rpc ListFeatures(Rectangle) returns (stream Feature) {}`
-  客户端发起一次请求，服务器端返回一个流式数据，比如一个数组中的逐个元素。
-- `rpc RecordRoute(stream Point) returns (RouteSummary) {}`
-  客户端发起的请求是一个流式的数据，比如数组中的逐个元素，服务器返回一个相应
-- `rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}`
-  客户端发起的请求是一个流式数据，比如数组中的逐个元素，服务器返回的也是流式数据。
 
 
-
-### 2. protoc 编译
+### 2. 编译生成源代码
 
 使用 protoc 编译生成对应源文件，具体命令如下:
 
 ```go
-protoc  --go_out=. --go_opt=paths=source_relative \
-   --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-   ./proto/hello_world.proto
+protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+   ./hello_world.proto
 ```
 
-会生成`.pb.go`和`_grpc.pb.go`两个文件。
+会在当前目录生成`hello_world.pb.go`和`hello_world_grpc.pb.go`两个文件。
 
 
 
-### 3. server.go
+> 具体 protobuf 如何定义，各个参数的作用见 [protobuf][protobuf]
+
+
+
+### 3. Server 
 
 ```go
 package main
@@ -161,34 +154,38 @@ import (
 	"log"
 	"net"
 
+	pb "github.com/lixd/grpc-go-example/helloworld/helloworld"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-	pb "i-go/grpc/helloworld/proto"
 )
 
-// greeterServer 随便定义一个结构体用于实现 .proto文件中定义的API
-// 新版本 gRPC 要求必须嵌入 pb.UnimplementedGreeterServer 对象
+const (
+	port = ":50051"
+)
+
+// greeterServer 定义一个结构体用于实现 .proto文件中定义的方法
+// 新版本 gRPC 要求必须嵌入 pb.UnimplementedGreeterServer 结构体
 type greeterServer struct {
 	pb.UnimplementedGreeterServer
 }
 
-// SayHello 简单实现一下.proto文件中定义的 API
+// SayHello 简单实现一下.proto文件中定义的 SayHello 方法
 func (g *greeterServer) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	return &pb.HelloReply{Message: "Hello " + in.Name}, nil
+	log.Printf("Received: %v", in.GetName())
+	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
 }
+
 func main() {
-	listen, err := net.Listen("tcp", ":8080")
+	listen, err := net.Listen("tcp", port)
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed to listen: %v", err)
 	}
-	server := grpc.NewServer()
+	s := grpc.NewServer()
 	// 将服务描述(server)及其具体实现(greeterServer)注册到 gRPC 中去.
 	// 内部使用的是一个 map 结构存储，类似 HTTP server。
-	pb.RegisterGreeterServer(server, &greeterServer{})
-	// reflection.Register(server)
-	log.Println("Serving gRPC on 0.0.0.0:8080")
-	if err := server.Serve(listen); err != nil {
-		panic(err)
+	pb.RegisterGreeterServer(s, &greeterServer{})
+	log.Println("Serving gRPC on 0.0.0.0" + port)
+	if err := s.Serve(listen); err != nil {
+		log.Fatalf("failed to serve: %v", err)
 	}
 }
 ```
@@ -200,7 +197,9 @@ func main() {
 * 3）将服务描述及其具体实现注册到 gRPC 中；
 * 4）启动服务。
 
-### 4. client.go
+
+
+### 4. Client 
 
 ```go
 package main
@@ -208,62 +207,84 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"time"
 
+	pb "github.com/lixd/grpc-go-example/helloworld/helloworld"
 	"google.golang.org/grpc"
-	pb "i-go/grpc/helloworld/proto"
+)
+
+const (
+	address     = "localhost:50051"
+	defaultName = "world"
 )
 
 func main() {
-	conn, err := grpc.DialContext(context.Background(), "0.0.0.0:8080", grpc.WithInsecure())
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		panic(err)
+		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
+	c := pb.NewGreeterClient(conn)
 
-	client := pb.NewGreeterClient(conn)
-	resp, err := client.SayHello(context.Background(), &pb.HelloRequest{Name: "world"})
+	// 通过命令行参数指定 name
+	name := defaultName
+	if len(os.Args) > 1 {
+		name = os.Args[1]
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", resp.Message)
+	log.Printf("Greeting: %s", r.GetMessage())
 }
 ```
 
 具体步骤如下：
 
-* 1）首先使用 `grpc.DialContext()` 与 gRPC 服务器建立连接；
+* 1）首先使用 `grpc.Dial()` 与 gRPC 服务器建立连接；
 * 2）使用` pb.NewGreeterClient(conn)`获取客户端；
-* 3）使用 客户端调用方法`client.SayHello`。
+* 3）通过客户端调用ServiceAPI方法`client.SayHello`。
 
 
 
-### 5. run
+### 5. Test
 
 先运行服务端
 
 ```sh
-$ go run server.go
-2020/12/17 20:28:19 Serving gRPC on 0.0.0.0:8080
+lixd@17x:~/17x/projects/grpc-go-example/helloworld/server$ go run main.go 
+2021/01/23 14:47:20 Serving gRPC on 0.0.0.0:50051
+2021/01/23 14:47:32 Received: world
+2021/01/23 14:47:52 Received: 指月
 ```
 
 然后运行客户端
 
 ```sh
-$ go run client.go
-2020/12/17 20:28:27 Greeting: Hello world
+lixd@17x:~/17x/projects/grpc-go-example/helloworld/client$ go run main.go 
+2021/01/23 14:47:32 Greeting: Hello world
+lixd@17x:~/17x/projects/grpc-go-example/helloworld/client$ go run main.go 指月
+2021/01/23 14:47:52 Greeting: Hello 指月
 ```
 
 到此为止 gRPC 版的 hello world 已经完成了。
 
+
+
 ## 4. 小结
 
-使用 gRPC 的3个步骤:
+使用 gRPC 的 3个 步骤:
 
 * 1）需要使用 protobuf 定义接口，即编写 .proto 文件;
 * 2）然后使用 protoc 工具配合编译插件编译生成特定语言或模块的执行代码，比如 Go、Java、C/C++、Python 等。
 * 3）分别编写 server 端和 client 端代码，写入自己的业务逻辑。
 
 
+
+> gRPC 系列相关代码见 [Github][Github]
 
 
 
@@ -272,3 +293,9 @@ $ go run client.go
 `https://grpc.io/docs/languages/go/quickstart/`
 
 `https://github.com/grpc/grpc-go`
+
+
+
+[Github]:https://github.com/lixd/grpc-go-example
+[Protobuf 章节]:https://www.lixueduan.com/post/grpc/01-protobuf
+[protobuf详解]:https://github.com/lixd/daily-notes/blob/master/Components/RPC/gRPC/%E5%BC%95%E5%85%A5%E5%85%B6%E4%BB%96proto%E6%96%87%E4%BB%B6.md

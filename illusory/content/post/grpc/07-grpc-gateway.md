@@ -88,6 +88,8 @@ protoc --go_out . --go-grpc_out . --grpc-gateway_out . hello_world.proto
 
 ## 3. 例子
 
+> 本文所有代码都在这里 [Github](https://github.com/lixd/i-go/tree/master/grpc/gateway)。
+
 首先确保自己的环境是ok的，具体如下：
 
 * 1）执行 protoc --version 能打印出版本信息；
@@ -560,10 +562,6 @@ func request_Greeter_SayHello_0(ctx context.Context, marshaler runtime.Marshaler
 
 
 到这里可以发现 gRPC-Gateway 的具体流程和之前的描述是一致的。
-
-
-
-本文所有代码都在[Github](https://github.com/lixd/i-go/tree/master/grpc/gateway)。
 
 
 
