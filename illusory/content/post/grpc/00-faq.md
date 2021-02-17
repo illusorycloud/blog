@@ -1,5 +1,5 @@
 ---
-title: "gRPC入门教程(零)---使用gRPC时遇到的问题"
+title: "gRPC系列(零)---使用gRPC时遇到的问题"
 description: "主要记录在使用gRPC时遇到的一些问题及其解决方案"
 date: 2019-07-16 22:00:00
 draft: false
@@ -21,7 +21,7 @@ categories: ["gRPC"]
 
 测试时一直报如下这个错：
 
-```go
+```sh
 rpc error:Code=Unimplemented desc = Method Not Found！
 ```
 
@@ -49,7 +49,7 @@ rpc error:Code=Unimplemented desc = Method Not Found！
 
 `https://www.itread01.com/content/1547029280.html`
 
-### 原因
+### 2. 原因
 
 `这是由于`.proto文件`中的`package name` 被修改，和 server 端的package 不一致导致的,双方同步`.proto文件` packagename` 重新编译生成对应的代码即可。
 
@@ -65,11 +65,13 @@ rpc error:Code=Unimplemented desc = Method Not Found！
 details = "Received message larger than max (6194304 vs. 4194304)"
 ```
 
+### 2. 原因
+
 接收消息超过了最大限制(默认4M)
 
 
 
-### 2. 解决
+### 3. 解决方案
 
 可以在建立连接的时候修改这个限制。
 
@@ -90,7 +92,7 @@ diaOpt := grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(maxSize), grpc.Max
 conn, err := grpc.Dial(endpoint, grpc.WithInsecure(), diaOpt)
 ```
 
-### 3. 源码
+### 4. 相关源码
 
 #### RecvMsg
 

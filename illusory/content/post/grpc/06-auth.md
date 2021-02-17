@@ -26,9 +26,9 @@ type PerRPCCredentials interface {
 
 **各方法作用如下**：
 
-**GetRequestMetadata**：以map的形式返回本次调用的授权信息，ctx 是用来控制超时的，并不是从这个 ctx 中获取。
+**GetRequestMetadata**：以 map 的形式返回本次调用的授权信息，ctx 是用来控制超时的，并不是从这个 ctx 中获取。
 
-**RequireTransportSecurity **：则是指该 Credentials 的传输需要 TLS 加密，如果返回 true 则说明该 Credentials 需要在一个有 TLS 认证的安全连接上传输，如果当前连接并没有使用 TLS 则会报错：
+**RequireTransportSecurity **：指该 Credentials 的传输是否需要需要 TLS 加密，如果返回 true 则说明该 Credentials 需要在一个有 TLS 认证的安全连接上传输，如果当前连接并没有使用 TLS 则会报错：
 
 ```sh
 transport: cannot send secure credentials on an insecure connection
@@ -365,8 +365,11 @@ exit status 1
 
 `https://books.studygolang.com/advanced-go-programming-book/ch4-rpc/ch4-05-grpc-hack.html`
 
+`https://github.com/grpc/grpc-go`
+
 `https://grpc.io/docs/guides/auth`
 
 
 
 [Github]: https://github.com/lixd/grpc-go-example
+
