@@ -1,5 +1,5 @@
 ---
-title: "Docker入门教程(二)---docker和docker-compose 快速安装"
+title: "Docker系列(二)---docker和docker-compose 快速安装"
 description: "docker和docker-compose 快速安装"
 date: 2020-04-20 22:00:00
 draft: false
