@@ -7,9 +7,15 @@ tags: ["Docker"]
 categories: ["Docker"]
 ---
 
+
+
 本文主要介绍了 Docker容器的核心实现原理，包括 Namespace、Cgroups、rootfs 等。
 
 <!--more-->
+
+> 接触容器也很长时间了，期间也查阅了不少资料，神秘的 Docker 容器也逐渐变得不那么神秘，于是想着简单整理一下 docker 容器的核心实现原理。
+
+
 
 ## 1. 容器与进程
 
@@ -27,7 +33,9 @@ categories: ["Docker"]
 
 ### 1. Namespace 
 
-Linux 中包括多种Namespace ：
+**Namespace** 技术实际上修改了应用进程看待整个计算机“视图”，即它的“视线”被操作系统做了限制，只能“看到”某些指定的内容。
+
+在 Linux 下可以根据隔离的属性不同分为不同的 Namespace ：
 
 * 1）PID Namespace
 * 2）Mount Namespace
@@ -36,11 +44,9 @@ Linux 中包括多种Namespace ：
 * 5）Network Namespace
 * 6）User Namespace
 
-**Namespace** 技术实际上修改了应用进程看待整个计算机“视图”，即它的“视线”被操作系统做了限制，只能“看到”某些指定的内容。
 
 
-
-**存在的问题**
+**Namespace 存在的问题**
 
 最大的问题就是隔离得不彻底。
 
@@ -48,7 +54,7 @@ Linux 中包括多种Namespace ：
 
 其次，在 Linux 内核中，有很多资源和对象是不能被 Namespace 化的，最典型的例子就是：时间。
 
-> 容器中修改了时间，会导致宿主机时间被修改，间接的宿主机上所有容器的实时间都被修改了。
+> 容器中修改了时间，实际修改的是宿主机时间，那么宿主机上所有容器的时间都跟着变化了。
 
 
 
@@ -60,14 +66,11 @@ Linux Cgroups 就是 Linux 内核中用来为进程设置资源限制的一个�
 
 **它最主要的作用，就是限制一个进程组能够使用的资源上限**，包括 CPU、内存、磁盘、网络带宽等等。
 
-
-
 在 Linux 中，Cgroups 给用户暴露出来的操作接口是文件系统，即它以文件和目录的方式组织在操作系统的 /sys/fs/cgroup 路径下。
 
-展示 cgroups 相关文件：
-
-```shell
-mount -t cgroup
+```sh
+#查看 cgroups 相关文件
+$ mount -t cgroup
 # 结果大概是这样的
 cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd)
 cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (rw,nosuid,nodev,noexec,relatime,net_prio,net_cls)
@@ -80,14 +83,15 @@ cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,fr
 cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio)
 cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,hugetlb)
 cgroup on /sys/fs/cgroup/pids type cgroup (rw,nosuid,nodev,noexec,relatime,pids)
-
 ```
+
+
 
 可以看到，在`/sys/fs/cgroup` 下面有很多诸如 cpuset、cpu、 memory 这样的子目录，也叫子系统。也就是这台机器当前可以被 Cgroups 进行限制的资源种类。
 
 比如，对 CPU 子系统来说，我们就可以看到如下几个配置文件，这个指令是：
 
-```shell
+```sh
 ls /sys/fs/cgroup/cpu
 # 目录下大概有这么一些内容
 assist                 cgroup.event_control  cgroup.sane_behavior  cpuacct.stat   cpuacct.usage_percpu  cpu.cfs_quota_us  cpu.rt_runtime_us  cpu.stat  notify_on_release  system.slice
@@ -96,13 +100,13 @@ cgroup.clone_children  cgroup.procs                 cpuacct.usage  cpu.cfs_perio
 
 
 
-**限制CPU使用**
+**例子：限制CPU使用**
 
 而这样的配置文件又如何使用呢？
 
 你需要在对应的子系统下面创建一个目录，比如，我们现在进入 /sys/fs/cgroup/cpu 目录下：
 
-```shell
+```sh
 [root@iz2ze0ephck4d0aztho5r5z cpu]# mkdir container
 [root@iz2ze0ephck4d0aztho5r5z cpu]# ls container/
 cgroup.clone_children  cgroup.event_control  cgroup.procs  cpuacct.stat  cpuacct.usage  cpuacct.usage_percpu  cpu.cfs_period_us  cpu.cfs_quota_us  cpu.rt_period_us  cpu.rt_runtime_us  cpu.shares  cpu.stat  notify_on_release  tasks
@@ -112,7 +116,7 @@ cgroup.clone_children  cgroup.event_control  cgroup.procs  cpuacct.stat  cpuacct
 
 现在，我们在后台执行这样一条脚本:
 
-```shell
+```sh
 $ while : ; do : ; done &
 [1] 27218
 ```
@@ -121,7 +125,7 @@ $ while : ; do : ; done &
 
 查看一下CPU占用
 
-```shell
+```sh
 $ top
 
 PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND    
@@ -134,7 +138,7 @@ PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
 
 我们可以通过查看 container 目录下的文件，看到 container 控制组里的 CPU quota 还没有任何限制（即：-1），CPU period 则是默认的 100  ms（100000  us）：
 
-```shell
+```sh
 $ cat /sys/fs/cgroup/cpu/container/cpu.cfs_quota_us 
 -1
 $ cat /sys/fs/cgroup/cpu/container/cpu.cfs_period_us 
@@ -143,7 +147,7 @@ $ cat /sys/fs/cgroup/cpu/container/cpu.cfs_period_us
 
 接下来，我们可以通过修改这些文件的内容来设置限制。比如，向 container 组里的 cfs_quota 文件写入 20 ms（20000 us）：
 
-```shell
+```sh
 $ echo 20000 > /sys/fs/cgroup/cpu/container/cpu.cfs_quota_us
 ```
 
@@ -151,7 +155,7 @@ $ echo 20000 > /sys/fs/cgroup/cpu/container/cpu.cfs_quota_us
 
 接下来，我们把被限制的进程的 PID 写入 container 组里的 tasks 文件，上面的设置就会对该进程生效了：
 
-```shell
+```sh
 $ echo 27218 > /sys/fs/cgroup/cpu/container/tasks 
 ```
 
@@ -195,7 +199,7 @@ $ cat /sys/fs/cgroup/cpu/docker/5d5c9f67d/cpu.cfs_quota_us
 
 
 
-**存在的问题**
+**Cgroups 存在的问题**
 
 Cgroups 对资源的限制能力也有很多不完善的地方，被提及最多的自然是 /proc 文件系统的问题。
 
@@ -233,19 +237,7 @@ Linux 中**chroot**命令（change root file system）就能很方便的完成�
 
 
 
-### 2. 启动过程
-
-* 1）启用 Linux Namespace 配置
-* 2）设置指定的 Cgroups 参数
-* 3）切换进程的根目录（Change Root）
-
-> Docker 项目在切换进程的根目录这一步上会优先使用 pivot_root 系统调用，如果系统不支持，才会使用 chroot。
-
-这样，一个完整的容器就诞生了。
-
-
-
-### 3. rootfs
+### 2. rootfs
 
 **而这个挂载在容器根目录上、用来为容器进程提供隔离后执行环境的文件系统，就是所谓的“容器镜像”。它还有一个更为专业的名字，叫作：rootfs（根文件系统）**。
 
@@ -261,7 +253,7 @@ Linux 中**chroot**命令（change root file system）就能很方便的完成�
 
 
 
-### 4. 镜像层（Layer）
+### 3. 镜像层（Layer）
 
 Docker 在镜像的设计中，引入了层（layer）的概念。也就是说，用户制作镜像的每一步操作，都会生成一个层，也就是一个增量 rootfs。
 
@@ -273,7 +265,7 @@ Docker 镜像层用到了一种叫作**联合文件系统（Union File System）
 
 Docker 镜像分为多个层，然后使用 UFS 将这多个层挂载到一个目录下面，这样这个目录就包含了完整的文件了。
 
-> UFS在不同系统有各自的实现，所以Docker的不同发行版使用的也不一样，可以通过 docker info 查看。常见有 aufs（ubuntu常用）、overlay2（centos常用）
+> UnionFS 在不同系统有各自的实现，所以Docker的不同发行版使用的也不一样，可以通过 docker info 查看。常见有 aufs（ubuntu常用）、overlay2（centos常用）
 
 
 
@@ -291,7 +283,9 @@ Docker 镜像分为多个层，然后使用 UFS 将这多个层挂载到一个�
 
 而一旦在容器里做了写操作，你修改产生的内容就会以增量的方式出现在这个层中，删除操作实现比较特殊（类似于标记删除）。
 
-为了实现删除操作，aufs（UFS的一种实现） 会在可读写层创建一个 whiteout 文件，把只读层里的文件“遮挡”起来。
+AUFS的whiteout的实现是通过在上层的可写的目录下建立对应的whiteout隐藏文件来实现的。
+
+为了实现删除操作，aufs（UnionFS的一种实现） 会在可读写层创建一个 whiteout 文件，把只读层里的文件“遮挡”起来。
 
 > 比如，你要删除只读层里一个名叫 foo 的文件，那么这个删除操作实际上是在可读写层创建了一个名叫.wh.foo 的文件。这样，当这两个层被联合挂载之后，foo 文件就会被.wh.foo 文件“遮挡”起来，“消失”了。
 
@@ -325,9 +319,11 @@ Docker 容器全景图如下：
 
 ![docker-overview][docker-overview]
 
-
+> 图源：深入剖析Kubernetes
 
 ## 5. 参考
+
+`https://draveness.me/docker/`
 
 `https://en.wikipedia.org/wiki/Linux_namespaces`
 
@@ -341,4 +337,5 @@ Docker 容器全景图如下：
 
 
 
-[docker-overview]:docker-full.jpg
+[docker-overview]:https://github.com/lixd/blog/raw/master/images/docker/docker-overview.jpg
+
