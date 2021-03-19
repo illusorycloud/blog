@@ -246,7 +246,7 @@ docker0 处理转发的过程，则继续扮演二层交换机的角色。此时
 
 
 
-[docker-network-container2container]:https://docker-network-container2container.png
-[docker-network-host2container]:https://docker-network-host2container.png
-[docker-network-container2outer]:docker-network-container2outer
-[docker-network-cluster]:docker-network-cluster
+[docker-network-container2container]:https://github.com/lixd/blog/raw/master/images/docker/docker-network-container2container.png
+[docker-network-host2container]:https://github.com/lixd/blog/raw/master/images/docker/docker-network-host2container.png
+[docker-network-container2outer]:https://github.com/lixd/blog/raw/master/images/docker/docker-network-container2outer.png
+[docker-network-cluster]:https://github.com/lixd/blog/raw/master/images/docker/docker-network-clusterr.png
