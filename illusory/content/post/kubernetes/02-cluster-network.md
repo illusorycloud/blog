@@ -1,8 +1,8 @@
 ---
 title: "Kubernetes系列(二)---集群网络之Flannel核心原理"
 description: "Kubernetes 集群网络方案 Flannel 核心原理详解"
-date: 2021-02-20
-draft: true
+date: 2021-03-20
+draft: false
 categories: ["Kubernetes"]
 tags: ["Kubernetes"]
 ---
@@ -23,13 +23,13 @@ Docker 的默认配置下，不同宿主机上的容器通过 IP 地址进行互
 * 2）host-gw；
 * 3）UDP。
 
-> 其中 UDP 和 VXLAN 都是隧道模型，host-gw 则是纯三层网络方案。
+> 其中 UDP 和 VXLAN 都是隧道模式，host-gw 则是纯三层网络方案。
 
 UDP 模式，是 Flannel 项目最早支持的一种方式，却也是性能最差的一种方式。所以，这个模式目前已经被弃用。不过，Flannel 之所以最先选择 UDP 模式，就是因为这种模式是最直接、也是最容易理解的容器跨主网络实现。
 
 ## 2. Flannel UDP
 
-### 0.例子
+### 0. 例子
 
 在这个例子中，我有两台宿主机。
 
@@ -42,7 +42,7 @@ UDP 模式，是 Flannel 项目最早支持的一种方式，却也是性能最�
 
 UDP 方案具体流程如下图所示：
 
-![](D:/Home/17x/Projects/daily-notes/CloudNative/Kubernetes/assets/flannel-udp.jpg)
+![flannel-udp][flannel-udp]
 
 
 
@@ -164,7 +164,7 @@ IP 包到 docker0 网桥后的流程就属于容器网络了。
 
 而这个过程，由于使用到了 flannel0 这个 TUN 设备，仅在发出 IP 包的过程中，就**需要经过三次用户态与内核态之间的数据拷贝**，如下所示：
 
-![](D:/Home/17x/Projects/daily-notes/CloudNative/Kubernetes/assets/flannel-udp-tun.jpg)
+![flannel-udp-tun][flannel-udp-tun]
 
 
 
@@ -196,7 +196,7 @@ VXLAN 的覆盖网络的设计思想是：**在现有的三层网络之上，“
 
 具体流程如下：
 
-![](D:/Home/17x/Projects/daily-notes/CloudNative/Kubernetes/assets/flannel-vxlan.jpg)
+![flannel-vxlan][flannel-vxlan]
 
 可以看到，图中每台宿主机上名叫 flannel.1 的设备，就是 VXLAN 所需的 VTEP 设备，它既有 IP 地址，也有 MAC 地址。
 
@@ -260,7 +260,7 @@ flannel.1 设备的 FDB 则由 flanneld 进程维护。
 
 所以在我们的例子中，“源 VTEP 设备”收到“原始 IP 包”后，就要想办法把“原始 IP 包”加上一个**目的 MAC 地址**，封装成一个二层数据帧，然后发送给“目的 VTEP 设备”。
 
-![](D:/Home/17x/Projects/daily-notes/CloudNative/Kubernetes/assets/flannel-vxlan-inner-data-frame.jpg)
+![flannel-vxlan-inner-data-frame][flannel-vxlan-inner-data-frame]
 
 前面路由记录中我们知道了“目的 VTEP 设备”的 IP 地址，这里就可以使用 IP 地址查询对应的 MAC 地址，这正是 ARP（Address Resolution Protocol ）表的功能。
 
@@ -324,7 +324,7 @@ $ bridge fdb show flannel.1 | grep 5e:f8:4f:00:e3:37
 
 
 
-![](D:/Home/17x/Projects/daily-notes/CloudNative/Kubernetes/assets/flannel-vxlan-outer-data-frame.jpg)
+![flannel-vxlan-outer-data-frame][flannel-vxlan-outer-data-frame]
 
 接下来，Node 1 上的 flannel.1 设备就可以把这个数据帧从 Node 1 的 eth0 网卡发出去。显然，这个帧会经过宿主机网络来到 Node 2 的 eth0 网卡。
 
@@ -347,6 +347,8 @@ Node 2 的内核网络栈会发现这个数据帧里有 VXLAN Header，并且 VN
 ## 4. 小结
 
 本章主要分析了 Flannel 网络中的 UDP 和 VXLAN 实现。
+
+
 
 **具体实现**
 
@@ -372,15 +374,14 @@ VXLAN 模式组建的覆盖网络，其实就是一个由不同宿主机上的 V
 
 `https://blog.laputa.io/kubernetes-flannel-networking-6a1cb1f8ec7c`
 
+`https://feisky.gitbooks.io/kubernetes/content/network/flannel/flannel.html`
 
 
 
+[flannel-udp]:https://github.com/lixd/blog/raw/master/images/kubernetes/flannel/flannel-udp.jpg
+[flannel-udp-tun]:https://github.com/lixd/blog/raw/master/images/kubernetes/flannel/flannel-udp-tun.jpg
+[flannel-vxlan]:https://github.com/lixd/blog/raw/master/images/kubernetes/flannel/flannel-vxlan.jpg
 
-[flannel-udp.jpg]:flannel-udp.jpg
+[flannel-vxlan-inner-data-frame]:https://github.com/lixd/blog/raw/master/images/kubernetes/flannel/flannel-vxlan-inner-data-frame.jpg
 
-[flannel-udp-tun.jpg]:flannel-udp-tun.jpg
-[flannel-vxlan.jpg]:flannel-vxlan.jpg
-
-[flannel-vxlan-inner-data-frame.jpg]:flannel-vxlan-inner-data-frame.jpg
-
-[flannel-vxlan-outer-data-frame.jpg]:flannel-vxlan-outer-data-frame.jpg
+[flannel-vxlan-outer-data-frame]:https://github.com/lixd/blog/raw/master/images/kubernetes/flannel/flannel-vxlan-outer-data-frame.jpg
