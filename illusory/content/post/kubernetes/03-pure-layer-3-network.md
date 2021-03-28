@@ -83,7 +83,7 @@ Calico 由三个部分组成：
 
 **除了对路由信息的维护方式之外，Calico 项目与 Flannel 的 host-gw 模式的另一个不同之处，就是它不会在宿主机上创建任何网桥设备**。
 
-<img src="D:/Home/17x/Projects/daily-notes/CloudNative/Kubernetes/assets/network/k8s-network-bgp.jpg" style="zoom:50%;" />
+![k8s-network-bgp][k8s-network-bgp]
 
 
 
@@ -206,3 +206,12 @@ P 包进入 IP 隧道设备之后，就会被 Linux 内核的 IPIP 驱动接管�
 `https://blog.laputa.io/kubernetes-flannel-networking-6a1cb1f8ec7c`
 
 `https://feisky.gitbooks.io/kubernetes/content/network/flannel/flannel.html`
+
+
+
+
+
+[k8s-network-pure-layer3]:k8s-network-pure-layer3.png
+[k8s-network-bgp]:k8s-network-bgp.jpg
+
+[k8s-network-calico-ipip]:k8s-network-calico-ipip.jpg
