@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列(八)---使用context进行超时控制"
+title: "gRPC系列教程(八)---使用context进行超时控制"
 description: "使用context进行超时控制"
 date: 2021-01-29 22:00:00
 draft: false

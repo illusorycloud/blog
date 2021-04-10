@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列(二)---集群网络之Flannel核心原理"
+title: "Kubernetes系列教程(二)---集群网络之Flannel核心原理"
 description: "Kubernetes 集群网络方案 Flannel 核心原理详解"
 date: 2021-03-20
 draft: false

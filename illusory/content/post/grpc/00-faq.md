@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列(零)---使用gRPC时遇到的问题"
+title: "gRPC系列教程(零)---使用gRPC时遇到的问题"
 description: "主要记录在使用gRPC时遇到的一些问题及其解决方案"
 date: 2019-07-16 22:00:00
 draft: false

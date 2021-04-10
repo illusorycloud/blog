@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列(一)---通过Kubeadm部署K8s集群"
+title: "Kubernetes系列教程(一)---通过Kubeadm部署K8s集群"
 description: "通过Kubeadm部署K8s集群"
 date: 2021-02-20
 draft: false

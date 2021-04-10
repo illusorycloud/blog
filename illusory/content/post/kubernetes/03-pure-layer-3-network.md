@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列(三)---纯三层网络方案"
+title: "Kubernetes系列教程(三)---纯三层网络方案"
 description: "通过Kubeadm部署K8s集群"
 date: 2021-03-27
 draft: false
@@ -17,7 +17,7 @@ tags: ["Kubernetes"]
 
 除了前面讲述的隧道模式之外，Kubernetes 中还有一种纯三层（Pure Layer 3）网络方案。其中的典型例子，莫过于 Flannel 的 host-gw 模式和 Calico 项目了。
 
-<img src="D:/Home/17x/Projects/daily-notes/CloudNative/Kubernetes/assets/network/k8s-network-pure-layer3.png" style="zoom:50%;" />
+![k8s-network-pure-layer3][k8s-network-pure-layer3]
 
 当你设置 Flannel 使用 host-gw 模式之后，flanneld 会在宿主机上创建这样一条规则，以 Node 1 为例：
 
@@ -135,7 +135,7 @@ Calico 的 CNI 插件会为每个容器设置一个 Veth Pair 设备，然后把
 
 **在这种情况下，你就需要为 Calico 打开 IPIP 模式**。
 
-<img src="D:/Home/17x/Projects/daily-notes/CloudNative/Kubernetes/assets/network/k8s-network-calico-ipip.jpg" style="zoom:50%;" />
+![k8s-network-calico-ipip][k8s-network-calico-ipip]
 
 在 Calico 的 IPIP 模式下，Felix 进程在 Node 1 上添加的路由规则，会稍微不同，如下所示：
 
@@ -211,7 +211,6 @@ P 包进入 IP 隧道设备之后，就会被 Linux 内核的 IPIP 驱动接管�
 
 
 
-[k8s-network-pure-layer3]:k8s-network-pure-layer3.png
-[k8s-network-bgp]:k8s-network-bgp.jpg
-
-[k8s-network-calico-ipip]:k8s-network-calico-ipip.jpg
+[k8s-network-pure-layer3]:https://github.com/lixd/blog/raw/master/images/kubernetes/layer3/k8s-network-pure-layer3.png
+[k8s-network-bgp]:https://github.com/lixd/blog/raw/master/images/kubernetes/layer3/k8s-network-bgp.jpg
+[k8s-network-calico-ipip]:https://github.com/lixd/blog/raw/master/images/kubernetes/layer3/k8s-network-calico-ipip.jpg
