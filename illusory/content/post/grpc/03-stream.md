@@ -217,7 +217,7 @@ lixd@17x:~/17x/projects/grpc-go-example/features/stream/server$ go run main.go
 
 Client
 
-```go
+```sh
 lixd@17x:~/17x/projects/grpc-go-example/features/stream/client$ go run main.go 
 2021/01/23 19:06:27 Recv data:Hello World
 2021/01/23 19:06:27 Recv data:Hello World
