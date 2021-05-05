@@ -1,10 +1,10 @@
 ---
-title: "Kubernetes系列教程(一)---通过Kubeadm部署K8s集群"
-description: "通过Kubeadm部署K8s集群"
-date: 2021-02-20
+title: "write your title here"
+description: "a short description of this post"
+date: 2019-12-21
 draft: true
-categories: ["Kubernetes"]
-tags: ["Kubernetes"]
+categories: ["Go"]
+tags: ["Go"]
 ---
 
 draft: 表示是否草稿 为true则编译时不会编译该文章

@@ -65,7 +65,7 @@ Zipkin由Twitter开源于2012年。
 
 可以看到 Jaeger 和 Zipkin 架构上是非常接近的。相关对比的话可以查看下面的几篇文章。
 
-```json
+```text
 https://epsagon.com/observability/zipkin-or-jaeger-the-best-open-source-tools-for-distributed-tracing/
 https://logz.io/blog/zipkin-vs-jaeger/
 https://thenewstack.io/jaeger-vs-zipkin-battle-of-the-open-source-tracing-tools/

@@ -417,4 +417,4 @@ ghz.go  report.html
 
 
 [Github]:https://github.com/lixd/grpc-go-example
-[ghz-html]:https://ghz=html.png
+[ghz-html]:https://github.com/lixd/blog/raw/master/images/grpc/ghz-html.png

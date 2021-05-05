@@ -283,4 +283,4 @@ func main() {
 
 ## 3. 完整代码
 
-完整代码点这里！https://github.com/lixd/i-go/tree/master/apm/trace
+完整代码见[Github](https://github.com/lixd/i-go/tree/master/apm/trace)

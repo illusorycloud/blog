@@ -19,7 +19,7 @@ Jaeger 官方提供了 all-in-one 的 docker 镜像，可以基于此进行一�
 
 docker 命令如下：
 
-```go
+```sh
 $ docker run -d --name jaeger \
   -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \
   -p 5775:5775/udp \
@@ -39,7 +39,7 @@ $ docker run -d --name jaeger \
 
 也可以使用 docker compose 来启动
 
-```go
+```yaml
 version: '3.1'
 services:
   db:
@@ -65,7 +65,7 @@ services:
 
 下载地址
 
-```http
+```text
 https://www.jaegertracing.io/download/#binaries
 ```
 
