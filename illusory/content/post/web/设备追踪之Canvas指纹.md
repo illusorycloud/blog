@@ -1,17 +1,19 @@
 ---
-title: "write your title here"
-description: "a short description of this post"
-date: 2019-12-21
-draft: true
-categories: ["Go"]
-tags: ["Go"]
+title: "设备追踪之Canvas指纹"
+description: "常见的设备追踪方法之 Canvas 指纹（fingerprinting）"
+date: 2021-05-04
+draft: false
+categories: ["web"]
+tags: ["web"]
 ---
 
-本文主要讲解了常见的设备追踪方法之 Canvas 指纹（fingerprinting）。
+本文主要讲解了常见的设备追踪方法之 Canvas 指纹（fingerprinting）原理及其具体实现。
+
+可以通过该[Demo页][demo]进行测试，其中的 CRC32 值即当前设备的  Canvas 指纹。
 
 <!--more-->
 
-## 1. 前置条件
+## 1. 预备知识
 
 ### 1. 1. Canvas
 
@@ -36,7 +38,7 @@ PNG 图片主要关注头部和尾部。
 - `49 48 44 52`是固定值,代表IHDR；
 - **第二行开始的`00 00 01 D9`为图片宽度，`00 00 00 D6`为图片高度；**
 - 由于数据块长度为13，所以`08 02 00 00 00`为剩余填充部分；
-- **`12 04 6F 34`为头部信息的CRC32校验和。**
+- **`12 04 6F 34`为头部信息的CRC32校验和**
 
 
 
@@ -44,7 +46,7 @@ PNG 图片主要关注头部和尾部。
 
 ![png-footer][png-footer]
 
-* 倒数第二行的**`B4 82 2C D4`为图片内容的CRC32校验和。**
+* 倒数第二行的 `B4 82 2C D4` 为图片内容的**CRC32校验和**
   * 具体位置为倒数第16到第12之前的这4个值
   * 图片内容有丝毫不一致该CRC32校验和都会不同
 
@@ -171,9 +173,10 @@ Demo 如下，完整代码见[Github][github]
 
 
 
+[demo]:https://lixueduan.com/tools/canvasfp/fp-crc.html
 [github]:https://github.com/lixd/i-vue/tree/master/canvasfp
 [fingerprint.js]:https://github.com/fingerprintjs/fingerprintjs
 
-[png-header]:assets/png-header.png
-[png-footer]:assets/png-footer.png
+[png-header]:https://github.com/lixd/blog/raw/master/images/web/canvasfp/png-header.png
+[png-footer]:https://github.com/lixd/blog/raw/master/images/web/canvasfp/png-footer.png
 
