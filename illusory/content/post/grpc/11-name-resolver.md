@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列教程(十一)---NameResolver 原理分析"
+title: "gRPC系列教程(十一)---NameResolver 实战及原理分析"
 description: "gRPC NameResolver 核心原理详解"
 date: 2021-05-14 22:00:00
 draft: false
@@ -17,21 +17,21 @@ categories: ["gRPC"]
 
 具体可以参考[官方文档-Name Resolver](https://github.com/grpc/grpc/blob/master/doc/naming.md)
 
-gRPC 中的默认 name-system 是DNS，同时在客户端以插件形式提供了自定义 name-system 的机制。
+gRPC 中的默认 name-system 是 DNS，同时在客户端以插件形式提供了自定义 name-system 的机制。
 
 gRPC NameResolver 会根据 name-system 选择对应的解析器，用以解析用户提供的服务器名，最后返回具体地址列表（IP+端口号）。
 
-例如：默认使用 DNS name-system，我们只需要提供服务器的域名即端口号，NameResolver 就会使用 DNS 解析出域名对应的IP列表并返回。
+例如：默认使用 DNS name-system，我们只需要提供服务器的域名即端口号，NameResolver 就会使用 DNS 解析出域名对应的 IP 列表并返回。
 
 
 
 ## 2. Demo
 
-首先用一个Demo来介绍一个 gRPC 的 NameResolver 如何使用。
+首先用一个 Demo 来介绍一个 gRPC 的 NameResolver 如何使用。
 
 ### 2.1 Server
 
-服务端代码比较简单，没有什么需要注意的点。
+服务端代码比较简单，没有什么需要注意的地方。
 
 ```go
 package main
@@ -75,7 +75,7 @@ func main() {
 
 ### 2.2 Client
 
-客户端需要注意的是，这里建立连接时使用我们自定义的Scheme，而不是默认的 dns，所以需要有和这个自定义的Scheme对应的 Resolver 来解析才行。
+客户端需要注意的是，这里建立连接时使用我们自定义的 Scheme，而不是默认的 dns，所以需要有和这个自定义的 Scheme 对应的 Resolver 来解析才行。
 
 ```go
 package main
@@ -153,7 +153,7 @@ func main() {
 
 
 
-具体 Resolver 相关代码如下：
+具体 Resolver 实现如下：
 
 ```go
 // Following is an example name resolver. It includes a
@@ -208,7 +208,6 @@ func init() {
 	// init() function.
 	resolver.Register(&exampleResolverBuilder{})
 }
-
 ```
 
 resolver 包括 ResolverBuilder 和 Resolver两个部分。
@@ -241,7 +240,6 @@ Builder 则采用 Builder 模式在包初始化时创建并注册构造自定义
 ```sh
 lixd@17x:~/17x/projects/grpc-go-example/features/name_resolving/server$ go run main.go 
 2021/05/15 10:04:11 serving on localhost:50051
-
 ```
 
 ```sh
@@ -269,10 +267,9 @@ this is examples/name_resolving (from localhost:50051)
 this is examples/name_resolving (from localhost:50051)
 this is examples/name_resolving (from localhost:50051)
 this is examples/name_resolving (from localhost:50051)
-
 ```
 
-一起正常，说明我们的自定义 Resolver 是可以运行的，那么接下来从源码层面来分析一下 gRPC 中 Resolver 具体是如何工作的。
+一切正常，说明我们的自定义 Resolver 是可以运行的，那么接下来从源码层面来分析一下 gRPC 中 Resolver 具体是如何工作的。
 
 
 
@@ -318,6 +315,46 @@ DialContext() 内容比较多，这里只关注 Resolver 相关的代码：
 		}
 	}
 ```
+
+具体获取 resolver 的逻辑如下：
+
+```go
+// // clientconn.go 1577行
+func (cc *ClientConn) getResolver(scheme string) resolver.Builder {
+	for _, rb := range cc.dopts.resolvers {
+		if scheme == rb.Scheme() {
+			return rb
+		}
+	}
+	return resolver.Get(scheme)
+}
+// resolver.go 54行
+func Get(scheme string) Builder {
+	if b, ok := m[scheme]; ok {
+		return b
+	}
+	return nil
+}
+```
+
+可以看到最终是去 m 这个 map 中获取的 resolverBuilder。
+
+**那么这个 map m 中的 resolverBuilder 是从哪儿来的呢？**
+
+这个 resolver 就是客户端代码中的 init 方法注册进去的，全局 resolverBuild 都存放一个 map 中，key 为 scheme，value 为对应的 resolverBuilder。
+
+```go
+func init() {
+	// Register the example ResolverBuilder. This is usually done in a package's
+	// init() function.
+	resolver.Register(&exampleResolverBuilder{})
+}
+func Register(b Builder) {
+	m[b.Scheme()] = b
+}
+```
+
+
 
 接下来就通过 resolverBuilder 构建一个 Resolver 实例。
 
@@ -461,7 +498,9 @@ func (d *dnsResolver) watcher() {
 }
 ```
 
-所以这里虽然是死循环，但是会阻塞在第一个select处，直到 d.rn 有消息后才会执行一个 dns 更新，至于什么地方会往  d.rn 里写消息则等另外的文章来分析了。
+所以这里虽然是死循环，但是会阻塞在第一个 select 处，直到 d.rn 有消息后才会执行一个 dns 更新。
+
+> 至于什么地方会往  d.rn 里写消息相关代码比较复杂，等后续LB相关文章分析。
 
 这里还需要继续跟进`d.cc.UpdateState`方法，看下具体是怎么更新的，代码如下：
 
@@ -487,7 +526,7 @@ func (ccr *ccResolverWrapper) UpdateState(s resolver.State) {
 
 ## 4. 小结
 
-![](assets/name-resolver.png)
+![name-reslover][name-reslover]
 
 * 1）客户端启动时，注册自定义的 resolver 。
   * 一般在 init() 方法，构造自定义的 resolveBuilder，并将其注册到 grpc 内部的 resolveBuilder 表中（其实是一个全局 map，key 为协议名，value 为构造的 resolveBuilder）。
@@ -502,7 +541,7 @@ func (ccr *ccResolverWrapper) UpdateState(s resolver.State) {
 
 
 
-> 到这里在回头看 Demo 中的自定义 Resolver 应该就没什么问题了。由于只是个 Demo 所以真的非常简单。直接在 Build 中通过map存储addr，然后 ResolveNow 时直接从map中取出来更新服务实例列表，连 watcher 都省略了。
+> 到这里在回头看 Demo 中的自定义 Resolver 应该就没什么问题了。由于只是个 Demo 所以真的非常简单。直接在 Build 中通过 map 存储addr，然后 ResolveNow 时直接从 map 中取出来更新服务实例列表，连 watcher 都省略了。
 
 
 
@@ -518,3 +557,4 @@ func (ccr *ccResolverWrapper) UpdateState(s resolver.State) {
 
 
 [Github]:https://github.com/lixd/grpc-go-example
+[name-reslover]:https://github.com/lixd/blog/raw/master/images/grpc/name-resolver.png
