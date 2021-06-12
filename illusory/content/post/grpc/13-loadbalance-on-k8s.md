@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列教程(十三)--- Kubernetes 中的 gRPC 负载均衡"
+title: "gRPC系列教程(十三)--- Kubernetes 环境下的 gRPC 负载均衡"
 description: "gRPC LoadBalance on Kubernetes "
 date: 2021-05-28 22:00:00
 draft: false
@@ -44,7 +44,7 @@ categories: ["gRPC"]
 
 这也是比较容易实现的方案，具体为：[NameResolver](https://github.com/grpc/grpc/blob/master/doc/naming.md) + [load balancing policy](https://github.com/grpc/grpc/blob/master/doc/load-balancing.md)+[Headless-Service](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)。
 
-相关教程可以看上一篇文章[gRPC系列教程(十二)---客户端负载均衡](https://www.lixueduan.com/post/grpc/12-buildin-loadbalance/)
+相关教程可以看上一篇文章[gRPC系列教程(十二)---客户端负载均衡](https://www.lixueduan.com/post/grpc/12-client-side-loadbalance/)
 
 1）当 gRPC 客户端想要与 gRPC 服务器进行交互时，它首先尝试通过向 resolver 发出名称解析请求来解析服务器名称，解析程序返回已解析IP地址的列表。
 
