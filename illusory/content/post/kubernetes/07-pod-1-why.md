@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列教程(七)---Pod 之 为什么需要 Pod"
+title: "Kubernetes系列教程(七)---Pod 之(1) 为什么需要 Pod"
 description: "Kubernetes 项目为什么要搞出一个 Pod 的概念来"
 date: 2021-06-11
 draft: false
@@ -207,4 +207,4 @@ Pod 扮演的是传统部署环境里“虚拟机”的角色。这样的设计�
 
 
 
-[pod-infra]:pod-infra.png
+[pod-infra]:https://github.com/lixd/blog/raw/master/images/kubernetes/pod/pod-infra.png
