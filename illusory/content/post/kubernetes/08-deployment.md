@@ -21,13 +21,15 @@ tags: ["Kubernetes"]
 
 
 
-本章中的 Deployment 实际上是一个**两层控制器**。
+Deployment 是 Kubernetes 中最常见的控制器，实际上它是一个**两层控制器**。
 
-首先，它通过 **ReplicaSet 的个数**来描述应用的版本；
+* 首先，它通过 **ReplicaSet 的个数**来描述应用的版本；
 
-然后，它再通过 **ReplicaSet 的属性**（比如 replicas 的值），来保证 Pod 的副本数量。
+* 然后，它再通过 **ReplicaSet 的属性**（比如 replicas 的值），来保证 Pod 的副本数量。
 
-> 备注：Deployment 控制 ReplicaSet（版本），ReplicaSet 控制 Pod（副本数）。这个两层控制关系一定要牢记。
+> 注：Deployment 控制 ReplicaSet（版本），ReplicaSet 控制 Pod（副本数）。这个两层控制关系一定要牢记。
+
+Deployment 是 Kubernetes 编排能力的一种提现，通过 Deployment 我们可以让 Pod 稳定的维持在指定的数量，除此之外还有滚动更新、版本回滚等功能。
 
 
 
@@ -49,7 +51,7 @@ cronjob/                garbagecollector/       nodelifecycle/          replicat
 
 实际上，这些控制器之所以被统一放在 pkg/controller 目录下，就是因为它们都遵循 Kubernetes 项目中的一个通用编排模式，即：**控制循环（control loop）**。
 
-```go
+```sh
 // 伪代码如下
 for {
   实际状态 := 获取集群中对象X的实际状态（Actual State）
@@ -187,7 +189,7 @@ spec:
 
 具体如图所示:
 
-<img src="assets/deployment-rs.jpg" style="zoom: 25%;" />
+![replicaset][replicaset]
 
 
 
@@ -212,7 +214,7 @@ deployment.apps/nginx-deployment scaled
 
 
 
-<img src="assets/deployment-rs-roll.jpg" style="zoom:25%;" />
+![replicaset-roll-update][replicaset-roll-update]
 
 如上所示，Deployment 的控制器，实际上控制的是 ReplicaSet 的数目，以及每个 ReplicaSet 的属性。而一个应用的版本，对应的正是一个 ReplicaSet；
 
@@ -254,6 +256,6 @@ deployment.extensions/nginx-deployment
 
 
 
-[replicaset]:1
-[replicaset-roll-update]:2
+[replicaset]:https://github.com/lixd/blog/raw/master/images/kubernetes/deployment/replicaset.jpg
+[replicaset-roll-update]:https://github.com/lixd/blog/raw/master/images/kubernetes/deployment/replicaset-roll-update.jpg
 
