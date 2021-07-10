@@ -31,7 +31,7 @@ tags: ["etcd"]
 
 具体流程如下图所示：
 
-![etcd-read-step][etcd-read-step]
+![etcd-read-process][etcd-read-process]
 
 以下面的命令进行分析：
 
@@ -43,11 +43,15 @@ ok
 world
 ```
 
+
+
 ### 2.1 Client
 
 **1）首先，etcdctl 会对命令中的参数进行解析。**
 
-“get”是请求的方法，它是 KVServer 模块的 API；“hello”是我们查询的 key 名，“endpoints”是我们后端的 etcd 地址。
+* “get”是请求的方法，它是 KVServer 模块的 API；
+* “hello”是我们查询的 key 名；
+* “endpoints”是我们后端的 etcd 地址。
 
 > 通常，生产环境下中需要配置多个 endpoints，这样在 etcd 节点出现故障后，client 就可以自动重连到其它正常的节点，从而保证请求的正常执行。
 
@@ -168,5 +172,5 @@ A：**主要是性能因素**，如果将所有读请求都转发到 Leader，�
 
 
 
-[etcd-simple-arch]:etcd-simple-arch.png
-[etcd-read-step]:etcd-read-step.png
+[etcd-simple-arch]:https://github.com/lixd/blog/raw/master/images/etcd/read-process/etcd-simple-arch.png
+[etcd-read-process]:https://github.com/lixd/blog/raw/master/images/etcd/read-process/etcd-read-process.png
