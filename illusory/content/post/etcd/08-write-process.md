@@ -228,9 +228,15 @@ etcd 的解决方案是合并再合并：
 
 
 
+## 8. 参考
+
+`https://github.com/etcd-io/etcd`
+
+`https://etcd.io/docs/v3.4/learning/`
+
+`《etcd实战课》`
 
 
 
-
-[etcd-write-step]:etcd-write-step
-[wal-struct]:wal-struct
+[etcd-write-step]:https://github.com/lixd/blog/raw/master/images/etcd/write-process/etcd-write-step.png
+[wal-struct]:https://github.com/lixd/blog/raw/master/images/etcd/write-process/wal-struct.png
