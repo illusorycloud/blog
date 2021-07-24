@@ -13,11 +13,11 @@ categories: ["Golang"]
 
 ## 1. 缓存击穿
 
-平时开发中一般会给热点数据设置缓存，如 Redis，用户请求过来后先查询 Redis，有则直接返回，没有就会去查询数据库，然后再写入缓存。
+平时开发中为了提升性能，减轻DB压力，一般会给热点数据设置缓存，如 Redis，用户请求过来后先查询 Redis，有则直接返回，没有就会去查询数据库，然后再写入缓存。
 
-大致流程如下图：
+大致流程如下图所示：
 
-<img src="cache.png" style="zoom: 80%;" />
+![singleflight][singleflight]
 
 
 
@@ -306,7 +306,7 @@ fn 正常执行后就会将 normalReturn 赋值为 true，然后 defer2 里根�
 
 并且根据 normalReturn 的值来对 recovered 标记进行赋值。
 
-最后第一个 defer 就可以更新 normalReturn + recovered  这两个标记和 err 是否为 panicError 来判断是 panic 还是说 fn 里调用了 exit。
+最后第一个 defer 就可以根据 normalReturn + recovered  这两个标记和 err 是否为 panicError 来判断是 fn 里发生了 panic 还是说调用了 runtime.Goexit。
 
 **第三个点就是 map 的移除：**
 
@@ -330,7 +330,7 @@ fn 正常执行后就会将 normalReturn 赋值为 true，然后 defer2 里根�
 	}
 ```
 
-首先doCall 中调用了`c.wg.Done()`,然后 Do 中的`c.wg.Wait() `就全部返回了，直接就 return 了。
+首先doCall 中调用了`c.wg.Done()`,然后 Do 中的阻塞在`c.wg.Wait() `这里的大量请求就全部返回了，直接就 return 了。
 
 然后 doCall 中再调用`delete(g.m, key)` 把 key 从 m 中移除掉。
 
@@ -393,9 +393,9 @@ func (g *Group) Forget(key string) {
 
 singleflight 内部使用 waitGroup 来让同一个 key 的除了第一个请求的后续所有请求都阻塞。直到第一个请求执行 fn 返回后，其他请求才会返回。
 
-这意味着，如果 fn 执行需要很长时间，或者干脆就死循环了，那么后面的所有请求都会被一直阻塞。
+这意味着，如果 fn 执行需要很长时间，那么后面的所有请求都会被一直阻塞。
 
-这时候我们可以**使用 DoChan 结合 select 做超时控制**
+这时候我们可以**使用 DoChan 结合 ctx + select 做超时控制**
 
 ```go
 func loadChan(ctx context.Context,key string) (string, error) {
@@ -425,7 +425,7 @@ func loadChan(ctx context.Context,key string) (string, error) {
 
 ### 2. 请求失败
 
-singleflight 的实现为，如果第一个请求失败了，那么后续所有等待的请求都会返回同一个error。
+singleflight 的实现为，如果第一个请求失败了，那么后续所有等待的请求都会返回同一个 error。
 
 实际上可以根据下游能支撑的 rps 定时 forget 一下 key，让更多的请求能有机会走到后续逻辑。
 
@@ -451,3 +451,9 @@ go func() {
 `https://draveness.me/golang/docs/part3-runtime/ch06-concurrency/golang-sync-primitives/#singleflight`
 
 `https://lailin.xyz/post/go-training-week5-singleflight.html`
+
+
+
+
+
+[singleflight]:https://github.com/lixd/blog/raw/master/images/golang/singleflight/cache.png
