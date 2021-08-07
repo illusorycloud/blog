@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列教程(五)---拦截器Interceptor"
+title: "gRPC(Go)系列教程(五)---拦截器Interceptor"
 description: "gRPC拦截器使用"
 date: 2021-01-02 22:00:00
 draft: false

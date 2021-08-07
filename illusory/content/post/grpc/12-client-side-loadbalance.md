@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列教程(十二)---客户端负载均衡"
+title: "gRPC(Go)系列教程(十二)---客户端负载均衡"
 description: "gRPC LoadBalance"
 date: 2021-05-22 22:00:00
 draft: false

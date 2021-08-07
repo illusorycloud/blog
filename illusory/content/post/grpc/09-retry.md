@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列教程(九)---配置retry自动重试"
+title: "gRPC(Go)系列教程(九)---配置retry自动重试"
 description: "gRPC 中的retry自动重试配置"
 date: 2021-02-06 22:00:00
 draft: false

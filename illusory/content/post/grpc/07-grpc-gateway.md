@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列教程(七)---利用Gateway同时提供HTTP和RPC服务"
+title: "gRPC(Go)系列教程(七)---利用Gateway同时提供HTTP和RPC服务"
 description: "使用 gRPC-Gateway 同时对外提供  RESTful API 和 gRPC 接口"
 date: 2021-01-15 22:00:00
 draft: false

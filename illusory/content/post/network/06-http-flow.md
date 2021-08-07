@@ -1,19 +1,19 @@
 ---
-title: "一次HTTP(S)请求究竟需要多少流量"
-description: "通过抓包分析一次HTTP(S)请求究竟需要多少流量，和 HTTP 请求的执行流程"
+title: "一次HTTP(S)请求究竟需要多少流量?Wireshark抓包分析"
+description: "通过Wireshark抓包分析一次HTTP(S)请求究竟需要多少流量，和 HTTP 请求的执行流程"
 date: 2021-07-23
 draft: false
 categories: ["Network"]
 tags: ["Network"]
 ---
 
-本文主要通过抓包分析了一次HTTPS请求究竟需要多少流量，同时也分析了一下整个 HTTP 请求的执行流程。
+本文主要通过 Wireshark 抓包分析了一次 HTTP(S) 请求究竟需要多少流量，同时也分析了一下整个 HTTP 请求的执行流程。
 
 <!--more-->
 
 ## 1. 背景
 
-最近查询监控，观察到某个负载的带宽峰值在最高的时候都达到了近 30 M，然后查了对应时间段的系统 QPS，发现确实是有一个明细的峰值，但是也不应该有这种多流量吧？
+最近查询监控，观察到某个负载的带宽峰值在最高的时候都达到了近 30M，然后查了对应时间段的系统 QPS，发现确实是有一个明细的峰值，但是也不应该有这种多流量吧？
 
 > 根据QPS和接口响应数据大致计算下来，最多 5M 带宽就够了。
 
@@ -35,17 +35,17 @@ HTTP 响应除了包含我们业务数据的`响应体`之外还有`状态行`�
 
 > 由于一台机器上网络请求较多，我加了筛选条件，仅显示客户端和服务端通信的网络请求，所以请求的序号是不连续的。
 
-![](assets/ws-tcp-3.png)
+![ws-tcp-3][ws-tcp-3]
 
-![](assets/ws-tls.png)
+![ws-tls][ws-tls]
 
-![](assets/ws-logic.png)
+![ws-logic][ws-logic]
 
 > 因为没有保存，导致有部分截图漏掉了，所以又抓了一次，下面是第二次抓包的结果。
 
-![](assets/ws-keep-alive.png)
+![ws-keep-alive][ws-keep-alive]
 
-![](assets/ws-tcp-4.png)
+![ws-tcp-4][ws-tcp-4]
 
 
 
@@ -65,7 +65,7 @@ TCP 三次握手，四次挥手详情见[计算机网络(二)---TCP三次握手�
 
 ### 2.1 TCP 三次握手
 
-![](assets/ws-tcp-3.png)
+![ws-tcp-3][ws-tcp-3]
 
 首先是 三次握手，毕竟 HTTP 也是基于 TCP 的，所以需要先建立 TCP 连接。
 
@@ -75,7 +75,7 @@ TCP 三次握手，四次挥手详情见[计算机网络(二)---TCP三次握手�
 
 ### 2.2 TLS 握手
 
-![](assets/ws-tls.png)
+![ws-tls][ws-tls]
 
 由于是 HTTPS，所以还需要进行额外的一个 TLS 握手，具体步骤如下：
 
@@ -95,7 +95,7 @@ TCP 三次握手，四次挥手详情见[计算机网络(二)---TCP三次握手�
 
 ### 2.3 业务请求
 
-![](assets/ws-logic.png)
+![ws-logic][ws-logic]
 
 建立 TLS 连接后才能进行真正的业务请求，这里一共进行了 3 个请求。
 
@@ -107,7 +107,7 @@ TCP 三次握手，四次挥手详情见[计算机网络(二)---TCP三次握手�
 
 ### 2.4 Keep-Alive
 
-![](assets/ws-keep-alive.png)
+![ws-keep-alive][ws-keep-alive]
 
 为了防止连接被关闭，客户端会自动发送 Keep-Alive 请求来保持连接。
 
@@ -121,7 +121,7 @@ TCP 三次握手，四次挥手详情见[计算机网络(二)---TCP三次握手�
 
 最后则是 TCP 的四次挥手了。
 
-![](assets/ws-tcp-4.png)
+![ws-tcp-4][ws-tcp-4]
 
 <img src="https://github.com/lixd/blog/raw/master/images/network/tcp-close-connection-four.jpg" style="zoom: 67%;" />
 
@@ -151,3 +151,14 @@ TCP 三次握手，四次挥手详情见[计算机网络(二)---TCP三次握手�
 > 理论上讲 HTTP 肯定是比 HTTPS 快的，但是 HTTPS 多了 TLS 层极大增强了安全性，相比之下还是安全更重要，这也是为什么现在大部分网站都上 HTTPS 了。
 
 这也印证了为什么负载带宽这么高，且减少响应数据后带宽变化不大。毕竟真正消耗带宽的地方并不是业务数据。
+
+
+
+
+
+[ws-tcp-3]:https://github.com/lixd/blog/raw/master/images/network/http-flow/ws-tcp-3.png
+[ws-tls]:https://github.com/lixd/blog/raw/master/images/network/http-flow/ws-tls.png
+[ws-logic]:https://github.com/lixd/blog/raw/master/images/network/http-flow/ws-logic.png
+[ws-keep-alive]:https://github.com/lixd/blog/raw/master/images/network/http-flow/ws-keep-alive.png
+[ws-tcp-4]:https://github.com/lixd/blog/raw/master/images/network/http-flow/ws-tcp-4.png
+

@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列教程(十三)--- Kubernetes 环境下的 gRPC 负载均衡"
+title: "gRPC(Go)系列教程(十三)--- Kubernetes 环境下的 gRPC 负载均衡"
 description: "gRPC LoadBalance on Kubernetes "
 date: 2021-05-28 22:00:00
 draft: false

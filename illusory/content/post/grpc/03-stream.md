@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列教程(三)---Stream 推送流"
+title: "gRPC(Go)系列教程(三)---Stream 推送流"
 description: "gRPC stream 推送流使用教程"
 date: 2020-12-20 22:00:00
 draft: false

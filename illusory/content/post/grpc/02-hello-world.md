@@ -1,5 +1,5 @@
 ---
-title: "gRPC系列教程(二)---Hello gRPC"
+title: "gRPC(Go)系列教程(二)---Hello gRPC"
 description: "gRPC之hello world"
 date: 2020-12-19 22:00:00
 draft: false

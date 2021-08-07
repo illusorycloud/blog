@@ -46,4 +46,6 @@ toc: false
 | 《由浅入深吃透Docker》                | 2021 | Docker原理概述                  |
 | 《深入剖析Kubernetes》                | 2021 | Kubernetes核心原理，硬核，推荐  |
 | 《etcd实战课》                        | 2021 | Go生态常用组件，etcd核心原理    |
+| 《kakfa核心技术与实战》               | 2021 | kafka 入门与核心原理            |
+| 《Go语言设计与实现》                  | 2021 | Go语言实现分析                  |
 
