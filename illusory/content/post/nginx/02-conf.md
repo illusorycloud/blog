@@ -1,5 +1,5 @@
 ---
-title: "Nginx系列(二)---配置文件详解"
+title: "Nginx教程(二)---配置文件详解"
 description: "Nginx服务器的常用配置文件介绍"
 date: 2019-02-14 22:00:00
 draft: false

@@ -1,5 +1,5 @@
 ---
-title: "Redis入门教程(五)---搭建Redis集群"
+title: "Redis教程(五)---搭建Redis集群"
 description: "redis集群模式搭建过程"
 date: 2019-02-27 22:00:00
 draft: true

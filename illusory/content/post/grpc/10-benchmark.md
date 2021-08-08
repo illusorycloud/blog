@@ -1,5 +1,5 @@
 ---
-title: "gRPC(Go)系列教程(十)---gRPC压测工具ghz"
+title: "gRPC(Go)教程(十)---gRPC压测工具ghz"
 description: "gRPC Benchmark Tools ghz"
 date: 2021-04-16 22:00:00
 draft: false

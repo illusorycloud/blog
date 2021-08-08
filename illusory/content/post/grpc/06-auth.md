@@ -1,5 +1,5 @@
 ---
-title: "gRPC(Go)系列教程(六)---自定义身份校验"
+title: "gRPC(Go)教程(六)---自定义身份校验"
 description: "gRPC 自定义身份校验以提升安全性"
 date: 2021-01-08 22:00:00
 draft: false

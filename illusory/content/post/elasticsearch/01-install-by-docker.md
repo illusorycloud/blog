@@ -1,5 +1,5 @@
 ---
-title: "Elasticsearch 系列(一)--使用docker-compose快速搭建 elasticsearch"
+title: "Elasticsearch教程(一)--使用docker-compose快速搭建 elasticsearch"
 description: "elasticsearch 开发环境搭建"
 date: 2020-03-20 22:00:00
 draft: false

@@ -1,5 +1,5 @@
 ---
-title: "gRPC(Go)系列教程(四)---通过SSL/TLS建立安全连接"
+title: "gRPC(Go)教程(四)---通过SSL/TLS建立安全连接"
 description: "gRPC中如何通过TLS证书建立安全连接，让数据能够加密处理"
 date: 2020-12-25 22:00:00
 draft: false

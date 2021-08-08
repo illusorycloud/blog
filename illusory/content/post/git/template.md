@@ -1,5 +1,5 @@
 ---
-title: "Git系列()---配置及SSH key"
+title: "Git教程(一)---配置及SSH key"
 description: "Git 配置及SSH key过程记录"
 date: 2018-07-01 12:00:00
 draft: true

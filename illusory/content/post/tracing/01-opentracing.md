@@ -1,5 +1,5 @@
 ---
-title: "分布式链路追踪系列(一)---Opentracing 基本概念"
+title: "分布式链路追踪教程(一)---Opentracing 基本概念"
 description: "分布式链路追踪规范 Opentracing 基本概念"
 date: 2020-05-01
 draft: false

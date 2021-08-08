@@ -1,5 +1,5 @@
 ---
-title: "分布式链路追踪系列(四)---Jaeger 在 gin框架和 gRPC 中的使用"
+title: "分布式链路追踪教程(四)---Jaeger 在 gin框架和 gRPC 中的使用"
 description: "Jaeger 在 gin框架和 gRPC 中的使用"
 date: 2020-05-04
 draft: false

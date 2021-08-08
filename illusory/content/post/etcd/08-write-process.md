@@ -1,5 +1,5 @@
 ---
-title: "etcd系列教程(八)---写请求执行流程分析"
+title: "etcd教程(八)---写请求执行流程分析"
 description: "`docker-compose`来搭建`etcd`，包括单节点和集群模式"
 date: 2021-07-09
 draft: false

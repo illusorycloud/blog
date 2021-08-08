@@ -1,5 +1,5 @@
 ---
-title: "kafka(Go)系列教程(三)---Kafka 入门"
+title: "kafka(Go)教程(三)---Kafka 入门"
 description: "Kafka 入门教程,包括消息引擎介绍、 Kafka 相关术语、基本定位及其版本选择"
 date: 2021-08-06 21:00:00
 draft: false

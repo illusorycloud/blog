@@ -1,6 +1,6 @@
 ---
-title: "Docker系列(三)---核心实现原理"
-description: "Docker容器核心实现原理"
+title: "Docker教程(三)---核心实现原理分析"
+description: "Docker容器核心实现原理分析"
 date: 2021-02-14 22:00:00
 draft: false
 tags: ["Docker"]

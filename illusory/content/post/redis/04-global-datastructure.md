@@ -1,5 +1,5 @@
 ---
-title: "Redis系列(四)---全局数据结构"
+title: "Redis教程(四)---全局数据结构"
 description: "Redis 全局数据结构"
 date: 2020-11-27 22:00:00
 draft: false

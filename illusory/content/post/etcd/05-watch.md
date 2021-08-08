@@ -1,5 +1,5 @@
 ---
-title: "etcd系列(五)---watch机制原理分析"
+title: "etcd教程(五)---watch机制原理分析"
 description: "etcd v3 watch机制原理分析"
 date: 2020-02-17
 draft: false

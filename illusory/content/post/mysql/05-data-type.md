@@ -1,5 +1,5 @@
 ---
-title: "MySQL系列(五)---常见数据类型"
+title: "MySQL教程(五)---常见数据类型"
 description: "MySQL 常见数据类型的简单分析"
 date: 2020-03-20 22:00:00
 draft: false

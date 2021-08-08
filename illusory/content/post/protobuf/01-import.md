@@ -1,5 +1,5 @@
 ---
-title: "protobuf系列教程(一)---引入其他proto文件"
+title: "protobuf教程(一)---引入其他proto文件"
 description: "proto文件中引入其他proto文件"
 date: 2021-03-06 22:00:00
 draft: false

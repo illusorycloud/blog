@@ -1,5 +1,5 @@
 ---
-title: "Redis系列(五)---Redis 数据类型"
+title: "Redis教程(五)---Redis 数据类型"
 description: "Redis数据类型及其底层数据结构"
 date: 2020-12-05 22:00:00
 draft: false

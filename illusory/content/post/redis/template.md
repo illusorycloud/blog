@@ -1,5 +1,5 @@
 ---
-title: "Redis入门教程(七)---通过 Docker 安装 Redis"
+title: "Redis教程(七)---通过 Docker 安装 Redis"
 description: "docker快速安装redis，确实很方便"
 date: 2019-04-18 22:00:00
 draft: true

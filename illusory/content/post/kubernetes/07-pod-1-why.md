@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列教程(七)---Pod 之(1) 为什么需要 Pod"
+title: "Kubernetes教程(七)---Pod 之(1) 为什么需要 Pod"
 description: "Kubernetes 项目为什么要搞出一个 Pod 的概念来"
 date: 2021-06-11
 draft: false

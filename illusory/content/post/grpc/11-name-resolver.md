@@ -1,5 +1,5 @@
 ---
-title: "gRPC(Go)系列教程(十一)---NameResolver 实战及原理分析"
+title: "gRPC(Go)教程(十一)---NameResolver 实战及原理分析"
 description: "gRPC NameResolver 核心原理详解"
 date: 2021-05-14 22:00:00
 draft: false

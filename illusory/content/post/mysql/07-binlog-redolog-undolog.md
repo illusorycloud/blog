@@ -1,5 +1,5 @@
 ---
-title: "MySQL系列(七)---redolog与binlog"
+title: "MySQL教程(七)---redolog与binlog"
 description: "MySQL redolog与binlog的简单分析"
 date: 2020-04-05 22:00:00
 draft: false

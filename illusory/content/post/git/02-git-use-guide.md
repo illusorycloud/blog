@@ -1,5 +1,5 @@
 ---
-title: "Git系列(二)---常用命令"
+title: "Git教程(二)---常用命令"
 description: "Git基本使用和常用命令"
 date: 2018-08-06 12:00:00
 draft: false

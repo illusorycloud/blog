@@ -1,5 +1,5 @@
 ---
-title: "Redis系列教程(一)---通过docker-compose安装redis"
+title: "Redis教程(一)---通过docker-compose安装redis"
 description: "Linux下通过编译方式安装redis和通过docker-compose一键安装redis"
 date: 2020-01-02 22:00:00
 draft: false

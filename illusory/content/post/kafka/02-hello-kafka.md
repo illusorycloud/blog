@@ -1,5 +1,5 @@
 ---
-title: "Kafka(Go)系列教程(二)---hello Kafka"
+title: "Kafka(Go)教程(二)---hello Kafka"
 description: "Kafka 的 Golang 客户端 sarama 基本使用"
 date: 2021-07-30 22:00:00
 draft: false

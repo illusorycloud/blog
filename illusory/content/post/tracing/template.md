@@ -1,5 +1,5 @@
 ---
-title: "分布式链路追踪系列(三)---Jaeger入门"
+title: "分布式链路追踪教程(三)---Jaeger入门"
 description: "Jaeger 部署与简单使用"
 date: 2020-11-21
 draft: true

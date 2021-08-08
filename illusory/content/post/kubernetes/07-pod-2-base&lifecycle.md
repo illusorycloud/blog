@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列教程(七)---Pod 之(2) Pod 基本概念与生命周期"
+title: "Kubernetes教程(七)---Pod 之(2) Pod 基本概念与生命周期"
 description: "Kubernetes 项目 Pod 的概念及其生命周期"
 date: 2021-06-18
 draft: false

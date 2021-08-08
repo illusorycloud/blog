@@ -1,5 +1,5 @@
 ---
-title: "MySQL系列(六)---JOIN 语句执行流程"
+title: "MySQL教程(六)---JOIN 语句执行流程"
 description: "MySQL的 JOIN 语句执行流程详解"
 date: 2020-03-30 22:00:00
 draft: false

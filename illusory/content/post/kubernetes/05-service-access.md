@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列教程(五)---Service 的几种访问方式"
+title: "Kubernetes教程(五)---Service 的几种访问方式"
 description: "Kubernetes Service 的几种访问方式"
 date: 2021-04-09
 draft: false

@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列教程(八)---Deployment"
+title: "Kubernetes教程(八)---Deployment"
 description: "Kubernetes Deployment 详解"
 date: 2021-06-22
 draft: false

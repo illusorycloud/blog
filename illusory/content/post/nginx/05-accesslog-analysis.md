@@ -1,5 +1,5 @@
 ---
-title: "Nginx入门教程(五)---访问日志简单分析"
+title: "Nginx教程(五)---访问日志简单分析"
 description: "Nginx访问日志简单分析"
 date: 2020-10-16 22:00:00
 draft: false

@@ -1,5 +1,5 @@
 ---
-title: "kafka(Go)系列教程(四)---Kafka 线上部署与集群参数配置"
+title: "kafka(Go)教程(四)---Kafka 线上部署与集群参数配置"
 description: "Kafka 线上部署与集群参数配置"
 date: 2021-08-06 22:00:00
 draft: false
@@ -15,7 +15,7 @@ tags: ["Kafka"]
 
 Kafka 生产环境的一些注意事项，包括集群部署的考量和 集群配置参数的设置等，具体见下图：
 
-![](kafka-config-params.png)
+![kafka-config-params][kafka-config-params]
 
 
 
@@ -248,4 +248,4 @@ bin/kafka-configs.sh --zookeeper localhost:2181 --entity-type topics --entity-na
 
 
 
-[kafka-config-params]:kafka-config-params.png
+[kafka-config-params]:https://github.com/lixd/blog/raw/master/images/kafka/kafka-config-params.png

@@ -1,5 +1,5 @@
 ---
-title: "MySQL系列(一)---通过docker 一键搭建 MySQL 开发环境"
+title: "MySQL教程(一)---通过docker 一键搭建 MySQL 开发环境"
 description: "通过docker compose 一键搭建 MySQL 开发环境"
 date: 2019-03-05 22:00:00
 draft: false

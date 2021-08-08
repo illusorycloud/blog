@@ -1,5 +1,5 @@
 ---
-title: "protobuf系列教程(二)---核心编码原理"
+title: "protobuf教程(二)---核心编码原理"
 description: "protobuf 核心编码原理"
 date: 2021-03-12 22:00:00
 draft: false

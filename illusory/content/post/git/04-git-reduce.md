@@ -1,5 +1,5 @@
 ---
-title: "Git系列(四)---Git 仓库瘦身"
+title: "Git教程(四)---Git 仓库瘦身"
 description: "Git 仓库瘦身方案及 Git 仓库膨胀原理"
 date: 2020-06-25 22:00:00
 draft: false

@@ -1,5 +1,5 @@
 ---
-title: "MySQL系列(九)---MySQL几种JOIN算法"
+title: "MySQL教程(九)---MySQL几种JOIN算法"
 description: "MySQL中几种JOIN算法的简单分析"
 date: 2020-08-10 22:00:00
 draft: false

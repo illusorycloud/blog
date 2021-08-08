@@ -1,5 +1,5 @@
 ---
-title: "MySQL系列(八)---MVCC与undolog"
+title: "MySQL教程(八)---MVCC与undolog"
 description: "MySQL MVCC与undolog简要分析"
 date: 2020-04-10 22:00:00
 draft: false

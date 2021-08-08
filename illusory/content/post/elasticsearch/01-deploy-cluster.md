@@ -1,5 +1,5 @@
 ---
-title: "ELK系列(一)---基于docker-compose搭建elasticsearch集群"
+title: "ELK教程(一)---基于docker-compose搭建elasticsearch集群"
 description: "通过docker-compose快速搭建elasticsearch集群"
 date: 2019-12-17 22:00:00
 draft: true

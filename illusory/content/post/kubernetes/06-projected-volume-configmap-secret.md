@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列教程(六)---通过ConfigMap与Secret管理配置文件"
+title: "Kubernetes教程(六)---通过ConfigMap与Secret管理配置文件"
 description: "通过ConfigMap与Secret管理配置文件"
 date: 2021-04-23
 draft: false

@@ -1,5 +1,5 @@
 ---
-title: "Elasticsearch 系列(二)---基于 Docker 快速部署 ELK 日志系统"
+title: "Elasticsearch 教程(二)---基于 Docker 快速部署 ELK 日志系统"
 description: "基于 Docker 快速部署 ELK 日志系统"
 date: 2020-12-11 22:00:00
 draft: false

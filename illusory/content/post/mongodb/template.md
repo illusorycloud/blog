@@ -1,5 +1,5 @@
 ---
-title: "MongoDB入门系列(一)---基于Docker安装MongoDB"
+title: "MongoDB教程(一)---基于Docker安装MongoDB"
 description: "MongoDB安装与可视化工具选择"
 date: 2019-05-02 22:00:00
 draft: true

@@ -1,5 +1,5 @@
 ---
-title: "gRPC(Go)系列教程(一)---Protobuf"
+title: "gRPC(Go)教程(一)---Protobuf"
 description: "Protobuf基本使用"
 date: 2020-12-18 22:00:00
 draft: false

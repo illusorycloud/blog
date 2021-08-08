@@ -1,5 +1,5 @@
 ---
-title: "Redis系列教程(三)---redis高级数据结构"
+title: "Redis教程(三)---redis高级数据结构"
 description: "redis常用命令汇总"
 date: 2020-01-15 22:00:00
 draft: false

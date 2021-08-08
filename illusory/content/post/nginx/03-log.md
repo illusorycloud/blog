@@ -1,5 +1,5 @@
 ---
-title: "Nginx系列(三)---日志文件切割"
+title: "Nginx教程(三)---日志文件切割"
 description: "通过cron定时任务实现Nginx的日志文件切割"
 date: 2019-02-16 22:00:00
 draft: false

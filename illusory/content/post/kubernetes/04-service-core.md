@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列教程(四)---Service核心原理"
+title: "Kubernetes教程(四)---Service核心原理"
 description: "Kubernetes Service实现原理"
 date: 2021-04-02
 draft: false

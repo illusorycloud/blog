@@ -1,5 +1,5 @@
 ---
-title: "Nginx系列(四)---反向代理与负载均衡"
+title: "Nginx教程(四)---反向代理与负载均衡"
 description: "Nginx反向代理和负载均衡配置与使用"
 date: 2019-02-17 22:00:00
 draft: false

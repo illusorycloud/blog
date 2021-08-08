@@ -1,5 +1,5 @@
 ---
-title: "Nginx系列(一)---安装与配置"
+title: "Nginx教程(一)---安装与配置"
 description: "Nginx安装及其与Apache简单对比"
 date: 2019-02-13 22:00:00
 draft: false

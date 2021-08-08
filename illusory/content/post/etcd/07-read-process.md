@@ -1,5 +1,5 @@
 ---
-title: "etcd系列教程(七)---读请求执行流程"
+title: "etcd教程(七)---读请求执行流程分析"
 description: "`etcd 读请求具体执行流程分析"
 date: 2021-07-02
 draft: false

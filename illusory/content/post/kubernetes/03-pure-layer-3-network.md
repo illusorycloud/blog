@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes系列教程(三)---纯三层网络方案"
+title: "Kubernetes教程(三)---纯三层网络方案"
 description: "通过Kubeadm部署K8s集群"
 date: 2021-03-27
 draft: false

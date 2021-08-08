@@ -1,5 +1,5 @@
 ---
-title: "kafka(Go)系列教程(一)---docker-compose 安装 Kafka"
+title: "kafka(Go)教程(一)---docker-compose 安装 Kafka"
 description: "通过docker-compose 快速安装 Kafka"
 date: 2020-12-20 22:00:00
 draft: true

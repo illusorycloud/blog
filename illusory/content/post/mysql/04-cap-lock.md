@@ -1,5 +1,5 @@
 ---
-title: "MySQL系列(四)---MySQL 幻读与 InnoDB 间隙锁（Gap Lock）"
+title: "MySQL教程(四)---MySQL 幻读与 InnoDB 间隙锁（Gap Lock）"
 description: "MySQL 幻读与InnoDB 间隙锁（Gap Lock）"
 date: 2020-03-25 22:00:00
 draft: false

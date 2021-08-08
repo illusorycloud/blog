@@ -1,5 +1,5 @@
 ---
-title: "分布式链路追踪系列(五)---Jaeger线上环境部署"
+title: "分布式链路追踪教程(五)---Jaeger线上环境部署"
 description: "Jaeger线上环境部署"
 date: 2020-11-13	
 draft: false
