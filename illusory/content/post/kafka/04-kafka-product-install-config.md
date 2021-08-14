@@ -212,6 +212,8 @@ bin/kafka-configs.sh --zookeeper localhost:2181 --entity-type topics --entity-na
 
 ### 3.3 JVM 参数
 
+
+
 *  JVM 堆大小
   * 建议设置成 6GB ，这是目前业界比较公认的一个合理值
 * 垃圾回收器
@@ -224,7 +226,7 @@ bin/kafka-configs.sh --zookeeper localhost:2181 --entity-type topics --entity-na
 ### 3.4 操作系统参数
 
 * 文件描述符限制
-  * 通常情况下将它设置成一个超大的值是合理的做法，比如ulimit -n 1000000
+  * 通常情况下将它设置成一个超大的值是合理的做法，比如 ulimit -n 1000000
 * 文件系统类型
   * 根据官网的测试报告，ZFS > XFS > ext4
 * Swappiness
