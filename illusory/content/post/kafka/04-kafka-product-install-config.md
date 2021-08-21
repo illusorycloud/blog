@@ -1,5 +1,5 @@
 ---
-title: "kafka(Go)教程(四)---Kafka 线上部署与集群参数配置"
+title: "Kafka(Go)教程(四)---Kafka 线上部署与集群参数配置"
 description: "Kafka 线上部署与集群参数配置"
 date: 2021-08-06 22:00:00
 draft: false
@@ -7,7 +7,7 @@ categories: ["Kafka"]
 tags: ["Kafka"]
 ---
 
-本文主要记录了 Kafka 线上环境集群部署考虑因素和 集群参数配置。
+本文主要记录了 Kafka 线上环境集群部署考虑因素以及非常非常重要的 Kafka 参数配置讲解。
 
 <!--more-->
 

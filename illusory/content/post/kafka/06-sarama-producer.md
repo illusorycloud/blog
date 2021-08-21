@@ -1,13 +1,15 @@
 ---
 title: "kafka(Go)教程(六)---sarama 客户端 producer 源码分析"
 description: "Kafka Go sarama 客户端异步生产者源码分析"
-date: 2021-08-13 22:00:00
+date: 2021-08-14 22:00:00
 draft: false
 categories: ["Kafka"]
 tags: ["Kafka"]
 ---
 
-本文主要通过源码分析了 Kafka Go sarama 客户端生产者的实现原理，包括消息分发流程，消息打包处理，以及最终发送到 Kafka 等具体步骤。
+本文主要通过源码分析了 Kafka Go sarama 客户端生产者的实现原理，包括消息分发流程，消息打包处理，以及最终发送到 Kafka 等具体步骤，最后通过分析总结出的常见性能优化手段。
+
+
 
 <!--more-->
 
@@ -15,9 +17,11 @@ tags: ["Kafka"]
 
 ## 1. 概述
 
+> Kafka 系列相关代码见 [Github][Github]
+
 具体流程如下图：
 
-![](Sarama Producer 流程.png)
+![Sarama Producer 流程.png][Sarama Producer 流程.png]
 
 
 
@@ -161,13 +165,13 @@ func (p *asyncProducer) dispatcher() {
 }
 ```
 
-具体逻辑：从 `p.int` 中取出消息并写入到 `handler` 中，如果 `topic` 对应的 `handler` 不存在，则调用 `newTopicProducer()` 创建。
+具体逻辑：从 `p.input` 中取出消息并写入到 `handler` 中，如果 `topic` 对应的 `handler` 不存在，则调用 `newTopicProducer()` 创建。
 
 > 这里的 handler 是一个 unbuffered channel
 
 
 
-然后让我们来`handler = p.newTopicProducer(msg.Topic)`这一行的代码。
+然后让我们来看下`handler = p.newTopicProducer(msg.Topic)`这一行的代码。
 
 ```go
 func (p *asyncProducer) newTopicProducer(topic string) chan<- *ProducerMessage {
@@ -423,7 +427,7 @@ func (b *Broker) Produce(request *ProduceRequest) (*ProduceResponse, error) {
 
 最终调用了`sendAndReceive()`方法将消息发送出去。
 
-如果我们设置了需要 Acks，就会传一个 response 进去接收返回值吗；如果没设置，那么消息发出去之后，就不管了。
+如果我们设置了需要 Acks，就会传一个 response 进去接收返回值；如果没设置，那么消息发出去之后，就不管了。
 
 ```go
 func (b *Broker) sendAndReceive(req protocolBody, res protocolBody) error {
@@ -471,18 +475,6 @@ func (b *Broker) write(buf []byte) (n int, err error) {
 至此，`Sarama`生产者相关的内容就介绍完毕了。
 
 > 还有一个比较重要的，消息打包批量发送的逻辑，比较多再下一章讲。
-
-
-
-### 小结
-
-整个消息的发生流程如下：
-
-```sh
-msg-->AsyncProducer-->TopicProducer-->PartitionProducer-->BrokerProducer-->Kafka Broker
-```
-
-
 
 
 
@@ -713,9 +705,7 @@ func (bp *brokerProducer) run() {
 
 如果第二步时不需要发消息，output 就被置空，select 时对应的 case 就不会被执行。
 
-> 正常写法一般是在启动一个 goroutine 来处理定时发送的功能，但是这样两个 goroutine 之间就会存在竞争，会影响性能。这样处理省去了加解锁过程，性能会高一些，但是随之而来的是代码复杂度的提升。这种底层库这样写没什么问题，但是平常我们的业务代码就尽量别搞骚炒作了。
-
-> "The performance improvement does not materialize from the air,it comes with code complexity increase."一dvyokov
+> 正常写法一般是在启动一个 goroutine 来处理定时发送的功能，但是这样两个 goroutine 之间就会存在竞争，会影响性能。这样处理省去了加解锁过程，性能会高一些，但是随之而来的是代码复杂度的提升。
 
 
 
@@ -725,9 +715,37 @@ func (bp *brokerProducer) run() {
 
 
 
+## 4. 小结
+
+**1）具体流程：见开篇图**
+
+**2）常见优化手段：批量处理。**
+
+异步消费者 Go 实现中做了**消息批量发送**这个优化，当累积了足够的消息后一次性发送，减少网络请求次数以提升性能。
+
+> 类似于 Redis Pipeline，将多次命令一次性发送，以减少 RTT。
+
+当然为了避免在消息少的时候很久都凑不齐足够消息，导致的无法发送，一般还会设定一个**定时发送阈值**，每隔一段时间也会发送一次。
+
+这是一种常见的优化手段，比如 IO 相关的地方肯定会有什么 bufferio 之类的库，在写时先写 buffer，buffer 满了再一次性写入到磁盘。读取也是同样的，先读到 buffer 里，然后应用程序再从 buffer 里一行行读出去。
+
+**3）代码复杂度和性能取舍**
+
+在分析 Sarama Proudcer 的最后一段可以看到是有一个骚操作的，这种操作可以提升性能，但是随之而来的就是代码复杂度的提升。
+
+> 最近在看 Go runtime 里面也有很多骚操作。这种底层库、中间件这样写没什么问题，但是平常我们的业务代码就尽量别搞骚炒作了。
+
+> "The performance improvement does not materialize from the air,it comes with code complexity increase."一dvyokov
+
+性能不会凭空提升，随之而来的一定是代码复杂度的增加。
 
 
-## 4. 参考
+
+
+
+> Kafka 系列相关代码见 [Github][Github]
+
+## 5. 参考
 
 `https://github.com/Shopify/sarama`
 
@@ -739,6 +757,5 @@ func (bp *brokerProducer) run() {
 
 
 
-
-
-[Sarama Producer 流程.png]:Sarama Producer 流程.png
+[Github]: https://github.com/lixd/kafka-go-example
+[Sarama Producer 流程.png]:https://github.com/lixd/blog/raw/master/images/kafka/Sarama%20Producer%20%E6%B5%81%E7%A8%8B.png

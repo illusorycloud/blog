@@ -1,19 +1,25 @@
 ---
-title: "kafka(Go)教程(三)---Kafka 入门"
-description: "Kafka 入门教程,包括消息引擎介绍、 Kafka 相关术语、基本定位及其版本选择"
+title: "Kafka(Go)教程(三)---Kafka 相关概念介绍"
+description: "Kafka 入门教程,包括相关概念介绍:消息引擎、 Kafka 相关术语、基本定位及其版本选择等等"
 date: 2021-08-06 21:00:00
 draft: false
 categories: ["Kafka"]
 tags: ["Kafka"]
 ---
 
-本文为 Kafka 入门教程,主要包括 消息引擎介绍、 Kafka 相关术语、角色定位及其版本选择等等。
+本文为 Kafka 入门教程,主要包括相关概念介绍如： 消息引擎、 Kafka 相关术语、角色定位及其版本选择等等。
+
+
 
 <!--more-->
 
 
 
 ## 1. 消息引擎
+
+> Kafka 系列相关代码见 [Github][Github]
+
+
 
 *Kafka 是什么呢？*
 
@@ -156,5 +162,15 @@ CDH/HDP Kafka，这些大数据平台天然集成了 Apache Kafka，通过便捷
 
 
 
+> Kafka 系列相关代码见 [Github][Github]
+
 ## 6. 参考
+
+`https://kafka.apache.org/documentation`
+
+`《Kafka 核心技术与实战》`
+
+
+
+[Github]:https://github.com/lixd/kafka-go-example
 
