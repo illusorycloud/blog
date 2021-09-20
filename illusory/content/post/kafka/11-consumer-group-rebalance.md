@@ -56,7 +56,7 @@ Kafka 的 Consumer Group 机制正好避开这两种模型的缺陷，又兼具�
 
 ## 3. Rebalance
 
-### 概述
+### Rebalance 流程
 
 **Rebalance 本质上是一种协议，规定了一个 Consumer Group 下的所有 Consumer 如何达成一致，来分配订阅 Topic 的每个分区**。
 
@@ -70,7 +70,7 @@ Kafka 的 Consumer Group 机制正好避开这两种模型的缺陷，又兼具�
 
 假设目前某个 Consumer Group 下有两个 Consumer，比如 A 和 B，当第三个成员 C 加入时，Kafka 会触发 Rebalance，并根据默认的分配策略重新为 A、B 和 C 分配分区，如下图所示：
 
-![](kafka-rebalance.webp)
+![rebalance][rebalance]
 
 ### Rebalance 的弊端
 
@@ -261,3 +261,4 @@ Rebalance 弊端：
 
 [Github]:https://github.com/lixd/kafka-go-example
 
+[rebalance]:https://github.com/lixd/blog/raw/master/images/kafka/kafka-rebalance.webp

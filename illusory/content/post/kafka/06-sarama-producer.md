@@ -1,5 +1,5 @@
 ---
-title: "kafka(Go)教程(六)---sarama 客户端 producer 源码分析"
+title: "Kafka(Go)教程(六)---sarama 客户端 producer 源码分析"
 description: "Kafka Go sarama 客户端异步生产者源码分析"
 date: 2021-08-14 22:00:00
 draft: false
